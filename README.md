@@ -1,13 +1,13 @@
-react-utils
+rgen-cli
 
 =================
 A developer CLI for initializing React projects, managing utilities, and scaffolding components, hooks, pages, layouts, routes, and contexts quickly.
 
 [![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
 
-[![Version](https://img.shields.io/npm/v/react-utils.svg)](https://npmjs.org/package/react-utils)
+[![Version](https://img.shields.io/npm/v/rgen-cli.svg)](https://npmjs.org/package/rgen-cli)
 
-[![Downloads/week](https://img.shields.io/npm/dw/react-utils.svg)](https://npmjs.org/package/react-utils)
+[![Downloads/week](https://img.shields.io/npm/dw/rgen-cli.svg)](https://npmjs.org/package/rgen-cli)
 
 <!-- toc -->
 
@@ -23,7 +23,7 @@ A developer CLI for initializing React projects, managing utilities, and scaffol
 
 ```sh-session
 
-$ npm install -g react-utils
+$ npm install -g rgen-cli
 
 ```
 
@@ -60,10 +60,10 @@ This allows you to import modules from your `src` folder using `@/` instead of r
 
 <!-- commands -->
 
-- [`react-utils init`](#react-utils-hello-person)
-- [`react-utils make`](#react-utils-hello-person)
+- [`rgen-cli init`](#rgen-cli-hello-person)
+- [`rgen-cli make`](#rgen-cli-hello-person)
 
-## `react-utils init`
+## `rgen-cli init`
 
 Initializes a new React project with essential utilities and TailwindCSS setup.
 
@@ -73,17 +73,17 @@ This command performs the following steps:
 2. Installs 'clsx' for conditional classNames in React components.
 3. Installs 'tailwind-merge' to merge Tailwind class strings efficiently.
 4. Creates a utility function 'cn' in 'src/libs/utils.ts' that combines clsx and tailwind-merge.
-5. Generates a 'react-utils.json' configuration file with base path and debug settings.
+5. Generates a 'rgen-cli.json' configuration file with base path and debug settings.
 6. Adds a TypeScript path alias '@/_ -> ./src/_' in 'tsconfig.app.json' for cleaner imports.
 
-## `react-utils make`
+## `rgen-cli make`
 
 The `make` command helps you **quickly create React project elements** like components, hooks, layouts, pages, routes, or contexts.
 
 ## Usage
 
 ```bash
-react-utils make
+rgen-cli make
 
 ```
 
@@ -107,7 +107,7 @@ The CLI will then automatically generate the files in the appropriate folder wit
 ### Example
 
 ```bash
-react-utils make
+rgen-cli make
 
 ```
 
