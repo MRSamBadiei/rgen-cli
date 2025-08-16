@@ -15,14 +15,16 @@ export default class Build {
   public type: string
   public cmd: Command
   public typescript: boolean = true
+  public flags: any
   private defaults = {
     base: 'src/',
   }
 
-  constructor(cmd: Command, name: string, type: BuildType) {
+  constructor(cmd: Command, name: string, type: BuildType, flags?: any) {
     this.cmd = cmd
     this.name = name.trim().toLowerCase()
     this.type = type
+    this.flags = flags
   }
 
   async init() {

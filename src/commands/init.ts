@@ -13,6 +13,16 @@ export default class Init extends Command {
   static override flags = {}
 
   public async run(): Promise<void> {
+    // * ------------- [@types/node] -------------
+    this.log(chalk.blue('[+] Installing @types/node...'))
+
+    try {
+      execSync('npm install @types/node', {stdio: 'inherit'})
+      this.log(`${chalk.green('[+] Installed @types/node successfully.')} `)
+    } catch (err) {
+      this.error('Failed to install @types/node.')
+    }
+
     // * ------------- [TailwindCss] -------------
     this.log(chalk.blue('[+] Installing tailwindcss @tailwindcss/vite...'))
 
@@ -23,7 +33,7 @@ export default class Init extends Command {
       this.error('Failed to install tailwindcss @tailwindcss/vite.')
     }
 
-    // * ----------------------------
+    // * ------------- [clsx] -------------
     this.log(chalk.blue('[+] Installing clsx...'))
 
     try {
@@ -33,7 +43,7 @@ export default class Init extends Command {
       this.error('Failed to install clsx.')
     }
 
-    // * ----------------------------
+    // * ------------- [tailwind-merge] -------------
     this.log(chalk.blue('[+] Installing tailwind-merge...'))
 
     try {

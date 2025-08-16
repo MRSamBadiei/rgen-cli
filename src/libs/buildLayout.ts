@@ -13,13 +13,13 @@ export default class Layout extends Build {
     try {
       await this.init()
 
-      const layout = `
+      const layouttemplate = `
 export function ${this.uname}Layout() {
   <div>My ${this.uname} layout</div>
 }`
 
       const layoutPath = path.join(this.baseDir, `${this.uname}Layout.${this.typescript ? 'tsx' : 'jsx'}`)
-      fs.writeFileSync(layoutPath, layout)
+      fs.writeFileSync(layoutPath, layouttemplate)
 
       this.cmd.log(`${chalk.blue('[+]')} Creating new ${this.uname}Layout - ${chalk.blue(layoutPath)}`)
     } catch (err: unknown) {

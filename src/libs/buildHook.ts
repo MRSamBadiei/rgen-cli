@@ -13,24 +13,10 @@ export default class Hook extends Build {
     try {
       await this.init()
 
-      const hookTs = `import { useState, useEffect } from 'react'
+      const hookTemplate = `import { useState, useEffect } from 'react'
 
-
-export function use${this.uname}<T>() {
-  const [state, setState] = useState<T | null>(null)
-
-  useEffect(() => {
-    // TODO: add effect logic
-  }, [])
-
-  return { state, setState }
-}`
-
-      const hookJs = `import { useState, useEffect } from 'react'
-
-
-export function use${this.uname}() {
-  const [state, setState] = useState(null)
+export function use${this.uname}${this.typescript ? '<T>' : ''}() {
+  const [state, setState] = useState${this.typescript ? '<T | null>' : ''}(null)
 
   useEffect(() => {
     // TODO: add effect logic
@@ -41,7 +27,7 @@ export function use${this.uname}() {
 
       const hookPath = path.join(this.baseDir, `use${this.uname}.${this.typescript ? 'ts' : 'js'}`)
 
-      fs.writeFileSync(hookPath, this.typescript ? hookTs : hookJs)
+      fs.writeFileSync(hookPath, hookTemplate)
 
       this.cmd.log(`${chalk.blue('[+]')} Creating new use${this.uname} - ${chalk.blue(hookPath)}`)
     } catch (err: unknown) {

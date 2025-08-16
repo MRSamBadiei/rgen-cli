@@ -2,12 +2,13 @@ import chalk from 'chalk'
 import Build from './build.js'
 import {Command} from '@oclif/core'
 import path from 'node:path'
-import fs from 'node:fs'
+import fs, {mkdirSync, writeFileSync} from 'node:fs'
 import {existsSync} from 'node:fs'
+import Page from './buildPage.js'
 
 export default class Route extends Build {
-  constructor(cmd: Command, name: string) {
-    super(cmd, name, 'routes')
+  constructor(cmd: Command, name: string, flags?: any) {
+    super(cmd, name, 'routes', flags)
   }
 
   async setup() {
@@ -17,15 +18,15 @@ export default class Route extends Build {
 
       const indexPath = path.join(this.rootDir, `index.${this.typescript ? 'tsx' : 'jsx'}`)
       if (!existsSync(indexPath)) {
-        const indexTsx = `import {BrowserRouter, Routes} from 'react-router'
+        const indexTemplate = `import { BrowserRouter, Routes } from 'react-router'
 
-const routeModules = import.meta.glob('./**/*.tsx', { eager: true })
+const routeModules = import.meta.glob('./**/*.${this.typescript ? 'tsx' : 'jsx'}', { eager: true })
 
 export default function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
-        {Object.entries(routeModules).flatMap(([_, mod]: [string, any]) => {
+        {Object.entries(routeModules).flatMap(([_, mod]${this.typescript ? ': [string, any]' : ''}) => {
           // Each module exports an array of <Route> elements
           return mod.default
         })}
@@ -34,24 +35,7 @@ export default function AppRoutes() {
   )
 }`
 
-        const indexJsx = `import {BrowserRouter, Routes} from 'react-router'
-
-const routeModules = import.meta.glob('./**/*.jsx', { eager: true })
-
-export default function AppRoutes() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        {Object.entries(routeModules).flatMap(([_, mod]) => {
-          // Each module exports an array of <Route> elements
-          return mod.default
-        })}
-      </Routes>
-    </BrowserRouter>
-  )
-}`
-
-        fs.writeFileSync(indexPath, this.typescript ? indexTsx : indexJsx)
+        fs.writeFileSync(indexPath, indexTemplate)
 
         this.cmd.log(`${chalk.blue('[+]')} initialize AppRoutes - ${chalk.blue(indexPath)}`)
         this.cmd.log(chalk.yellow('Next steps:'))
@@ -66,19 +50,37 @@ export default function AppRoutes() {
     );`)
       }
 
+      const rootPath = path.join(this.rootDir, 'root', `index.${this.typescript ? 'tsx' : 'jsx'}`)
+      if (!existsSync(rootPath)) {
+        const page = new Page(this.cmd, 'root')
+        await page.setup()
+
+        const rootTemplate = `import { Route } from "react-router";
+import RootPage from '@/pages/root'
+
+export default [
+  <Route index element={<RootPage />} />
+]`
+
+        mkdirSync(path.join(this.rootDir, 'root'), {recursive: true})
+        writeFileSync(rootPath, rootTemplate)
+      }
+
+      if (this.flags.page) {
+        const page = new Page(this.cmd, this.name)
+        await page.setup()
+      }
+
       const routePath = path.join(this.baseDir, `index.${this.typescript ? 'tsx' : 'jsx'}`)
-      const routeTs = `import { Route } from "react-router";
-
+      const route = `import { Route } from "react-router";
+${this.flags.page ? `import ${this.uname}Page from '@/pages/${this.name}'\n` : ''}     
 export default [
-  <Route key="${this.name}" path="/${this.name}" element={<div>/${this.name}</div>} />
-]`
-      const routeJs = `import { Route } from "react-router";
-
-export default [
-  <Route key="${this.name}" path="/${this.name}" element={<div>/${this.name}</div>} />
+  <Route key="${this.name}" path="/${this.name}" element={${
+        this.flags.page ? `<${this.uname}Page />` : `<div>/${this.name}</div>`
+      }} />
 ]`
 
-      fs.writeFileSync(routePath, this.typescript ? routeTs : routeJs)
+      fs.writeFileSync(routePath, route)
     } catch (err: unknown) {
       if (err instanceof Error) {
         this.cmd.error(`${chalk.red(err)}`)

@@ -13,51 +13,38 @@ export default class Context extends Build {
     try {
       await this.init()
 
-      const contextTs = `import { createContext } from 'react'
-import { type ${this.uname}ContextValue } from './types'
+      // * Context Template
 
-export const ${this.uname}Context = createContext<${this.uname}ContextValue | undefined>(undefined)`
+      const contextTemplate = `import { createContext } from 'react'
+${this.typescript ? `import { type ${this.uname}ContextValue } from './types'\n` : ''}
+export const ${this.uname}Context = createContext${
+        this.typescript ? `<${this.uname}ContextValue | undefined>` : ''
+      }(undefined)`
 
-      const contextJs = `import { createContext } from 'react'
+      // * Provider Template
 
-export const ${this.uname}Context = createContext(undefined)`
-
-      const providerTs = `import { type ReactNode, useState } from 'react'
+      const providerTemplate = `import { ${this.typescript ? `type ReactNode, ` : ''}useState } from 'react'
 import { ${this.uname}Context } from './${this.uname}Context'
-import { type ${this.uname}ContextValue } from './types'
-
-interface Props {
+${
+  this.typescript
+    ? `import { type ${this.uname}ContextValue } from './types'\ninterface Props {
   children: ReactNode
+}\n`
+    : ''
 }
-      
-export const ${this.uname}Provider = ({ children } : Props) => {
-  const [state, setState] = useState<any>(null)
+export const ${this.uname}Provider = ({ children }${this.typescript ? ' : Props' : ''}) => {
+  const [state, setState] = useState${this.typescript ? '<any>' : ''}(null)
 
-  const value: ${this.uname}ContextValue = { state, setState}
+  const value${this.typescript ? `: ${this.uname}ContextValue` : ''} = { state, setState }
 
   return (
       <${this.uname}Context.Provider value={value}>
-        {children}
+        { children }
       </${this.uname}Context.Provider>
   )
 }`
 
-      const providerJs = `import { ReactNode, useState } from 'react'
-import { ${this.uname}Context } from './${this.uname}Context'
-      
-export const ${this.uname}Provider = ({ children }) => {
-  const [state, setState] = useState(null)
-
-  const value = { state, setState}
-
-  return (
-      <${this.uname}Context.Provider value={value}>
-        {children}
-      </${this.uname}Context.Provider>
-  )
-}`
-
-      const use = `import { useContext } from 'react'
+      const useTemplate = `import { useContext } from 'react'
 import { ${this.uname}Context } from './${this.uname}Context'
 
 export function use${this.uname}() {
@@ -68,12 +55,12 @@ export function use${this.uname}() {
   return context
 }`
 
-      const typeTs = `export interface ${this.uname}ContextValue {
+      const typeTemplate = `export interface ${this.uname}ContextValue {
   state: any,
   setState: React.Dispatch<React.SetStateAction<any>>
 }`
 
-      const index = `export * from './${this.uname}Context'
+      const indexTemplate = `export * from './${this.uname}Context'
 export * from './${this.uname}Provider'
 export * from './use${this.uname}'
 export * from './types'`
@@ -84,13 +71,13 @@ export * from './types'`
       const typePath = path.join(this.baseDir, 'types.ts')
       const indexPath = path.join(this.baseDir, `index.${this.typescript ? 'ts' : 'js'}`)
 
-      fs.writeFileSync(contextPath, this.typescript ? contextTs : contextJs)
-      fs.writeFileSync(providerPath, this.typescript ? providerTs : providerJs)
-      fs.writeFileSync(usePath, use)
+      fs.writeFileSync(contextPath, contextTemplate)
+      fs.writeFileSync(providerPath, providerTemplate)
+      fs.writeFileSync(usePath, useTemplate)
       if (this.typescript) {
-        fs.writeFileSync(typePath, typeTs)
+        fs.writeFileSync(typePath, typeTemplate)
       }
-      fs.writeFileSync(indexPath, index)
+      fs.writeFileSync(indexPath, indexTemplate)
 
       this.cmd.log(`${chalk.blue('[+]')} Creating new ${this.uname}Context - ${chalk.blue(contextPath)}`)
       this.cmd.log(`${chalk.blue('[+]')} Creating new ${this.uname}Provider - ${chalk.blue(providerPath)}`)

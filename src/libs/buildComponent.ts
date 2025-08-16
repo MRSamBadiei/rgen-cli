@@ -13,24 +13,19 @@ export default class Component extends Build {
     try {
       await this.init()
 
-      const componentTs = `import { type ComponentProps } from 'react'
-import { cn } from '@/libs/utils'
-
-interface Props extends ComponentProps<"div"> {}
-
-export function ${this.uname}({ className, ...props } : Props) {
-    <div className={cn(className)} {...props}/>
-}`
-
-      const componentJs = `import { cn } from '@/libs/utils'
-
-export function ${this.uname}({ className, ...props }) {
+      const componentTemplate = `import { cn } from '@/libs/utils'
+${
+  this.typescript
+    ? `import { type ComponentProps } from 'react'\ninterface Props extends ComponentProps<"div"> {}\n`
+    : ''
+}
+export function ${this.uname}({ className, ...props }${this.typescript ? ' : Props' : ''}) {
     <div className={cn(className)} {...props}/>
 }`
 
       const componentPath = path.join(this.baseDir, `${this.uname}.${this.typescript ? 'tsx' : 'jsx'}`)
 
-      fs.writeFileSync(componentPath, this.typescript ? componentTs : componentJs)
+      fs.writeFileSync(componentPath, componentTemplate)
 
       this.cmd.log(`${chalk.blue('[+]')} Creating new component ${this.uname} - ${chalk.blue(componentPath)}`)
     } catch (err: unknown) {

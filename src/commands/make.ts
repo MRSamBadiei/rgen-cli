@@ -6,6 +6,7 @@ import {execSync} from 'node:child_process'
 export default class Make extends Command {
   public async run(): Promise<void> {
     const makes = ['component', 'hook', 'layout', 'page', 'route', 'context']
+    const flags: string[] = []
 
     // Step 1: Ask user which type to create
     const {type} = await inquirer.prompt([
@@ -30,8 +31,30 @@ export default class Make extends Command {
     // Step 3: Delegate to the proper subcommand
     this.log(chalk.green(`[+] Running "make ${type} ${name}"...`))
 
+    // *
+    if (type === 'route') {
+      const pageAnswer = await inquirer.prompt([
+        {
+          type: 'confirm',
+          name: 'createPage',
+          message: 'Do you also want to create a page for this route?',
+          default: false,
+        },
+      ])
+
+      if (pageAnswer.createPage) {
+        flags.push('-p')
+      }
+    }
+
     try {
-      execSync(`rgen-cli make ${type} ${name}`, {stdio: 'inherit'})
+      let cmd = `rgen-cli make ${type} ${name}`
+
+      if (type === 'route' && flags.includes('-p')) {
+        cmd += ' -p'
+      }
+
+      execSync(cmd, {stdio: 'inherit'})
     } catch (err: any) {
       console.log(chalk.red(`[✖] ${err.message}`))
       process.exit(1)
