@@ -31,7 +31,7 @@ export default class Make extends Command {
     this.log(chalk.green(`[+] Running "make ${type} ${name}"...`))
 
     try {
-      execSync(`rgen make ${type} ${name}`, {stdio: 'inherit'})
+      execSync(`rgen-cli make ${type} ${name}`, {stdio: 'inherit'})
     } catch (err: any) {
       console.log(chalk.red(`[✖] ${err.message}`))
       process.exit(1)

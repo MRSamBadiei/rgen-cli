@@ -56,7 +56,7 @@ export function cn(...inputs: ClassValue[]) {
 
     this.log(`${chalk.blue('[+]')} Creating new libs/utils.ts - ${chalk.blue(utilsPath)}`)
 
-    const reactUtilsPath = path.join(process.cwd(), 'rgen.json')
+    const reactUtilsPath = path.join(process.cwd(), 'rgen-cli.json')
     fs.writeFileSync(
       reactUtilsPath,
       JSON.stringify(
@@ -69,7 +69,7 @@ export function cn(...inputs: ClassValue[]) {
       ),
       'utf-8',
     )
-    this.log(`${chalk.blue('[+]')} Creating new config rgen.json - ${chalk.blue(reactUtilsPath)}`)
+    this.log(`${chalk.blue('[+]')} Creating new config rgen-cli.json - ${chalk.blue(reactUtilsPath)}`)
 
     // * ------------- [tsconfig.app.json] -------------
 

@@ -26,10 +26,10 @@ export default class Build {
   }
 
   async init() {
-    // * check for rgen.json
-    const reactUtilsPath = path.join(process.cwd(), 'rgen.json')
+    // * check for rgen-cli.json
+    const reactUtilsPath = path.join(process.cwd(), 'rgen-cli.json')
     if (fs.existsSync(reactUtilsPath)) {
-      this.cmd.log(`${chalk.blue('[+]')} Found rgen config at: "${chalk.blue(reactUtilsPath)}"`)
+      this.cmd.log(`${chalk.blue('[+]')} Found rgen-cli config at: "${chalk.blue(reactUtilsPath)}"`)
 
       const reactUtilsDefaults = JSON.parse(fs.readFileSync(reactUtilsPath, 'utf-8'))
       if (reactUtilsDefaults.base) {
