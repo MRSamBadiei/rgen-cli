@@ -91,9 +91,9 @@ export function cn(...inputs: ClassValue[]) {
           tsconfigAppJsonPath,
         )}`,
       )
-    } else {
+    } /*else {
       this.error(`${chalk.red('[ERROR]')} tsconfig.app.json not found at ${chalk.cyan(tsconfigAppJsonPath)}`)
-    }
+    }*/
 
     this.log(
       `\n\n${chalk.green('[INFO]')}` +
