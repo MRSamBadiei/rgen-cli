@@ -3,7 +3,7 @@ import Store from '../../libs/buildStore.js'
 
 export default class MakeStore extends Command {
   static override args = {
-    name: Args.string({description: 'name of store', required: true}),
+    name: Args.string({description: 'Name of the store', required: true}),
   }
   static override description = 'Generate a React Redux store'
 

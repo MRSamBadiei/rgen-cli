@@ -5,6 +5,7 @@ import fs from 'node:fs'
 import chalk from 'chalk'
 import {execSync} from 'node:child_process'
 import {parse} from 'jsonc-parser'
+import {checkUpdate} from '../libs/update.js'
 
 export default class Init extends Command {
   static override args = {}
@@ -13,6 +14,8 @@ export default class Init extends Command {
   static override flags = {}
 
   public async run(): Promise<void> {
+    await checkUpdate(this)
+
     // * ------------- [@types/node] -------------
     this.log(chalk.blue('[+] Installing @types/node...'))
 

@@ -29,7 +29,7 @@ export function ${this.uname}({ className, ...props }${this.typescript ? ' : Pro
       this.cmd.log(`${chalk.blue('[+]')} Creating new component ${this.uname} - ${chalk.blue(componentPath)}`)
     } catch (err: unknown) {
       if (err instanceof Error) {
-        this.cmd.error(`${chalk.red(err)}`)
+        this.cmd.error(err)
       }
     }
   }

@@ -31,7 +31,7 @@ export function use${this.uname}${this.typescript ? '<T>' : ''}() {
       this.cmd.log(`${chalk.blue('[+]')} Creating new use${this.uname} - ${chalk.blue(hookPath)}`)
     } catch (err: unknown) {
       if (err instanceof Error) {
-        this.cmd.error(`${chalk.red(err)}`)
+        this.cmd.error(err)
       }
     }
   }

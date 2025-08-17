@@ -4,53 +4,81 @@
 
 ### A blazing-fast CLI for React developers.
 
-`rgen-cli` helps you **kickstart your React projects** and **scaffold essential building blocks**—like components, hooks, pages, layouts, routes, and contexts—with just a single command.
+`rgen-cli` helps you **kickstart your React projects** and **scaffold essential building blocks**—like components, hooks, pages, layouts, routes, contexts, forms, and stores—with just a single command.
 
 Whether you're starting fresh or scaling fast, `rgen-cli` keeps your codebase clean, consistent, and organized.
 
 [![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
-
 [![Version](https://img.shields.io/npm/v/rgen-cli.svg)](https://npmjs.org/package/rgen-cli)
-
 [![Downloads/week](https://img.shields.io/npm/dw/rgen-cli.svg)](https://npmjs.org/package/rgen-cli)
 
-<!-- toc -->
+---
 
-- [Installation](#installation) - [Getting Started](#getting-started) - [Rules](#rules) - [Commands](#commands)
+## Table of Contents
 
-<!-- tocstop -->
+- [Installation](#installation)
+- [Getting Started](#getting-started)
+
+  - [Initialize Your Project](#🧭-initialize-your-project)
+  - [Add Path Aliases](#🔗-add-path-aliases)
+  - [Finish Tailwind Setup](#🎨-last-step---finish-tailwind-setup)
+
+- [Rules](#rules)
+
+  - [Basic Name](#✅-basic-name)
+  - [Dot Notation](#🟠-dot-notation)
+  - [Dash Notation](#🟠-dash-notation)
+
+- [Commands](#commands)
+
+  - [`rgen-cli init`](#rgen-cli-init)
+  - [`rgen-cli make`](#rgen-cli-make)
+
+    - [`rgen-cli make component`](#rgen-cli-make-component-component-name)
+    - [`rgen-cli make context`](#rgen-cli-make-context-context-name)
+    - [`rgen-cli make hook`](#rgen-cli-make-hook-hook-name)
+    - [`rgen-cli make layout`](#rgen-cli-make-layout-layout-name)
+    - [`rgen-cli make page`](#rgen-cli-make-page-page-name)
+    - [`rgen-cli make route`](#rgen-cli-make-route-route-name)
+    - [`rgen-cli make store`](#rgen-cli-make-store-store-name)
+    - [`rgen-cli make form`](#rgen-cli-make-form-form-name)
+
+---
 
 # Installation
 
-<!-- Installation -->
-
-```sh-session
-$ npm install -g rgen-cli
-
+```sh
+npm install -g rgen-cli
 ```
+
+[Back to top](#table-of-contents)
+
+---
 
 # 🚀 Getting Started
 
 Before using `rgen-cli`, make sure you're inside a **React project**—either JavaScript or TypeScript.
-
-If you don’t have one yet, you can quickly scaffold a new project using **Vite**:
+If you don’t have one yet, scaffold a new project using **Vite**:
 
 👉 [Scaffolding your first Vite project](https://vite.dev/guide/#scaffolding-your-first-vite-project)
 
+---
+
 ## 🧭 Initialize Your Project
 
-Run the following command to set up your project structure:
-
-```sh-session
-$ rgen-cli init
-
+```sh
+rgen-cli init
 ```
 
-This will prepare your `src` directory and configuration files for use with `rgen-cli`.
+Prepares your `src` directory and configuration files for use with `rgen-cli`.
+
+[Back to top](#table-of-contents)
+
+---
 
 ## 🔗 Add Path Aliases
 
-To simplify your imports, add the following configuration to your `vite.config.js` or `vite.config.ts`:
+Add the following to your `vite.config.js` or `vite.config.ts`:
 
 ```ts
 import {defineConfig} from 'vite'
@@ -58,11 +86,8 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import path from 'node:path' // 👈 Add this
 
-// https://vite.dev/config/
-
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'), // 👈 Add this
@@ -71,347 +96,348 @@ export default defineConfig({
 })
 ```
 
-> ⚠️ Be sure to include the **entire `resolve` section**, not just the alias line. This ensures proper path resolution throughout your project.
-
-Once added, you can import modules like this:
+Then you can import modules like:
 
 ```ts
 import Button from '@/components/Button'
 ```
 
-Instead of:
+Instead of relative paths:
 
 ```ts
 import Button from '../../components/Button'
 ```
 
-## 🎨 Last step - [Finish Tailwind Setup]
+[Back to top](#table-of-contents)
 
-To complete your TailwindCSS configuration, follow the official guide:
+---
 
-👉 [TailwindCSS + Vite Installation](https://tailwindcss.com/docs/installation/using-vite)
+## 🎨 Last step - Finish Tailwind Setup
+
+Follow the official guide: [TailwindCSS + Vite Installation](https://tailwindcss.com/docs/installation/using-vite)
+
+[Back to top](#table-of-contents)
+
+---
 
 # Rules
 
-When using `rgen-cli make`, the name you provide determines both the **component name** and the **folder structure**. Here are the rules you should follow:
-
 ### ✅ Basic Name
 
-```sh-session
-$ rgen-cli make component button
-
+```sh
+rgen-cli make component button
 ```
 
 - **Component/Class Name**: `Button`
-
-- **Folder Path**: `src/<type>/button`
-
----
+- **Folder Path**: `src/components/button`
 
 ### 🟠 Dot (`.`) Notation
 
-```sh-session
-$ rgen-cli make dashboard.header
-
+```sh
+rgen-cli make dashboard.header
 ```
 
 - **Component/Class Name**: `DashboardHeader`
-
-- **Folder Path**: `src/<type>/dashboard/header`
-
-Use this to create nested folders.
-
----
+- **Folder Path**: `src/components/dashboard/header`
 
 ### 🟠 Dash (`-`) Notation
 
-```sh-session
-$ rgen-cli make page user-profile
-
+```sh
+rgen-cli make page user-profile
 ```
 
 - **Component/Class Name**: `UserProfile`
+- **Folder Path**: `src/pages/user-profile`
 
-- **Folder Path**: `src/<type>/user-profile`
+[Back to top](#table-of-contents)
 
-Use this for compound names. It will not create nested folders.
+---
 
 # Commands
 
-<!-- commands -->
-
-- [`rgen-cli init`](#rgen-cli-init)
-
-- [`rgen-cli make`](#rgen-cli-make)
-
-  - [`rgen-cli make component`](#rgen-cli-make-component-component-name)
-
-  - [`rgen-cli make context`](#rgen-cli-make-context-context-name)
-
-  - [`rgen-cli make hook`](#rgen-cli-make-hook-hook-name)
-
-  - [`rgen-cli make layout`](#rgen-cli-make-layout-layout-name)
-
-  - [`rgen-cli make page`](#rgen-cli-make-page-page-name)
-
-  - [`rgen-cli make route`](#rgen-cli-make-route-route-name)
-
 ## `rgen-cli init`
 
-Initializes a new React project with essential utilities and TailwindCSS setup.
+Initializes a React project with essential utilities and TailwindCSS setup.
+Steps include:
 
-This command performs the following steps:
+- Install TailwindCSS and @tailwindcss/vite
+- Install `clsx` and `tailwind-merge`
+- Create `cn` utility function in `src/libs/utils.ts`
+- Generate `rgen-cli.json` configuration file
+- Add TypeScript path alias `@/_ -> ./src/_`
 
-1. Installs TailwindCSS and @tailwindcss/vite for styling.
+[Back to top](#table-of-contents)
 
-2. Installs 'clsx' for conditional classNames in React components.
-
-3. Installs 'tailwind-merge' to merge Tailwind class strings efficiently.
-
-4. Creates a utility function 'cn' in 'src/libs/utils.ts' that combines clsx and tailwind-merge.
-
-5. Generates a 'rgen-cli.json' configuration file with base path and debug settings.
-
-6. Adds a TypeScript path alias '@/_ -> ./src/_' in 'tsconfig.app.json' for cleaner imports.
+---
 
 ## `rgen-cli make`
 
-The `make` command helps you **quickly create React project elements** like components, hooks, layouts, pages, routes, or contexts.
+Quickly create React project elements: components, hooks, layouts, pages, routes, contexts, forms, or stores.
 
-## Usage
-
-```sh-session
-$ rgen-cli make
-
+```sh
+rgen-cli make
 ```
 
-The command will prompt you to:
+- Prompt for type
+- Prompt for name
+- Generate files in the correct folder
 
-1.  **Select the type of item** you want to create:
+[Back to top](#table-of-contents)
 
-- `component` — a reusable React component
-
-- `hook` — a custom React hook
-
-- `layout` — a layout wrapper for pages or sections
-
-- `page` — a full page component
-
-- `route` — a route module for react-router
-
-- `context` — a React context for state management
-
-2.  **Enter the name** of the item.
-
-The CLI will then automatically generate the files in the appropriate folder with boilerplate code.
-
-### ✅ Example
-
-```sh-session
-$ rgen-cli make
-
-```
-
-**Prompt:**
-
-```
-Select what you want to create: component
-Enter the name for the component: Button
-
-```
+---
 
 ## `rgen-cli make component <component-name>`
 
-Generates a new React component in the `components` directory.
+Generates a new React component in `src/components`.
+
+```sh
+rgen-cli make component button
+```
 
 ### 🛠️ What It Does
 
-- Automatically creates a `.tsx` or `.jsx` template based on your setup
+- Creates `.tsx` or `.jsx` template based on project setup
+- Places files in `src/components/<component-name>/`
 
 ### ✅ Example
 
-```sh-session
-$ rgen-cli make component button
-
+```sh
+rgen-cli make component button
 ```
 
-This will generate:
+Generates:
 
-- `src/components/button/Button.tsx` or `.jsx`
+```
+src/components/button/Button.tsx
+```
+
+[Back to top](#table-of-contents)
+
+---
 
 ## `rgen-cli make context <context-name>`
 
-Generates a full React context setup in the `contexts` directory.
+Generates a React context in `src/contexts`.
+
+```sh
+rgen-cli make context auth
+```
 
 ### 🛠️ What It Does
 
-When you run this command, the CLI will automatically:
-
-- Create a context file (`<name>Context.tsx` or `.jsx`)
-
-- Create a provider component (`<name>Provider.tsx` or `.jsx`)
-
-- Create a custom hook (`use<name>.ts` or `.js`)
-
-- Create a types file (`types.ts`) if using TypeScript
-
-- Create an index file to export everything
-
-All files are placed inside the `contexts` folder and wired together for immediate use.
+- Create `<name>Context.tsx`
+- Create `<name>Provider.tsx`
+- Create `use<name>.ts` hook
+- Create `types.ts` (TypeScript only)
+- Create `index.ts` export
 
 ### ✅ Example
 
-```sh-session
-$ rgen-cli make context auth
-
+```
+src/contexts/auth/AuthContext.tsx
+src/contexts/auth/AuthProvider.tsx
+src/contexts/auth/useAuth.ts
+src/contexts/auth/types.ts
+src/contexts/auth/index.ts
 ```
 
-This will generate:
+[Back to top](#table-of-contents)
 
-- `src/contexts/auth/AuthContext.tsx` or `.jsx`
-
-- `src/contexts/auth/AuthProvider.tsx` or `.jsx`
-
-- `src/contexts/auth/useAuth.ts` or `.js`
-
-- `src/contexts/auth/types.ts` (TypeScript only)
-
-- `src/contexts/auth/index.ts` or `.js`
+---
 
 ## `rgen-cli make hook <hook-name>`
 
-Generates a custom React hook in the `hooks` directory.
+Generates a custom React hook in `src/hooks`.
+
+```sh
+rgen-cli make hook theme
+```
 
 ### 🛠️ What It Does
 
-When you run this command, the CLI will automatically:
-
-- Create a new hook template named `use<HookName>.ts` or `.js`
+- Create `use<HookName>.ts` or `.js`
 
 ### ✅ Example
 
-```sh-session
-$ rgen-cli make hook theme
-
+```
+src/hooks/theme/useTheme.ts
 ```
 
-This will generate:
+[Back to top](#table-of-contents)
 
-- `src/hooks/theme/useTheme.ts` (or `useTheme.js`)
-
-Perfect! Here's a **simple and clear Markdown explanation** for the `layout` CLI command, consistent with your other docs:
+---
 
 ## `rgen-cli make layout <layout-name>`
 
-Generates a basic layout component in the `layouts` directory.
+Generates a layout component in `src/layouts`.
+
+```sh
+rgen-cli make layout dashboard
+```
 
 ### 🛠️ What It Does
 
-When you run this command, the CLI will automatically:
-
-- Create a new layout template named `<LayoutName>Layout.tsx` or `.jsx`
+- Create `<LayoutName>Layout.tsx` or `.jsx`
 
 ### ✅ Example
 
-```sh-session
-$ rgen-cli make layout dashboard
-
+```
+src/layouts/dashboard/DashboardLayout.tsx
 ```
 
-This will generate:
+[Back to top](#table-of-contents)
 
-- `src/layouts/dashboard/DashboardLayout.tsx` (or `DashboardLayout.jsx`)
+---
 
 ## `rgen-cli make page <page-name>`
 
-Generates a basic page component in the `pages` directory.
+Generates a page component in `src/pages`.
+
+```sh
+rgen-cli make page profile
+```
 
 ### 🛠️ What It Does
 
-When you run this command, the CLI will automatically:
-
-- Create a new page file named `index.tsx` or `index.jsx` inside a folder named after your page
+- Create `index.tsx` or `.jsx` inside folder named after page
+- Default export component named `<PageName>Page`
 
 ### ✅ Example
 
-```sh-session
-$ rgen-cli make page profile
-
+```
+src/pages/profile/index.tsx
 ```
 
-This will generate:
+[Back to top](#table-of-contents)
 
-- `pages/profile/index.tsx` (or `index.jsx`)
-
-- With a default export component named `ProfilePage`
+---
 
 ## `rgen-cli make route <route-name>`
 
-Initializes the routing system and adds a new route to the `routes` directory.
+Adds a route in `src/routes`.
+
+```sh
+rgen-cli make route dashboard
+```
+
+### 🏷️ Flags
+
+| Flag | Description                                   |
+| ---- | --------------------------------------------- |
+| `-p` | Optional. Creates a page along with the route |
 
 ### 🛠️ What It Does
 
-When you run this command, the CLI will:
-
-1.  **Initialize the routing system** (if not already set up):
-
-- Creates a `routes/index.tsx` or `.jsx` file
-
-- Dynamically loads route modules using `import.meta.glob`
-
-- Sets up a `<BrowserRouter>` with `<Routes>` and auto-injected route components
-
-2.  **Add a new route**:
-
-- Creates a file `routes/<RouteName>/index.tsx` or `.jsx`
-
-- Exports a `<Route>` element for the given path
-
-### Flags
-
-- `-p` → Creates a page along with the route
+- Initializes routing system (if not exists)
+- Creates `routes/<RouteName>/index.tsx`
+- Adds `<Route>` for the path
+- Optionally generates page if `-p` flag is used
 
 ### ✅ Example
 
-```sh-session
-$ rgen-cli make route dashboard
-
+```sh
+rgen-cli make route dashboard -p
 ```
 
-This will:
-
-- Create `routes/Dashboard/index.tsx` (or `.jsx`)
-
-- Add a route for `/dashboard`
-
-- If routing is not yet initialized, it will also create `routes/index.tsx` with the full `<AppRoutes />` setup
-
-```sh-session
-$ rgen-cli make route dashboard -p
+Generates:
 
 ```
-
-This will:
-
-- Create `routes/Dashboard/index.tsx` (or `.jsx`)
-
-- Register the `/dashboard` route
-
-- Create `pages/dashboard/index.tsx` (or `.jsx`)
+src/routes/Dashboard/index.tsx
+src/pages/dashboard/index.tsx
+```
 
 ### ! Important
 
 Make sure your app uses the generated router:
 
 ```tsx
-import AppRoutes from  "@/routes"; // <- add this
+import AppRoutes from '@/routes' // 👈 add this
 
+createRoot(document.getElementById('root')!).render(
+  <AppRoutes />, // 👈 add this
+)
+```
 
-createRoot(document.getElementById("root")!).render(
-    <StrictMode>
-      <AppRoutes  /> // <- add this
-    </StrictMode>
-  );
+[Back to top](#table-of-contents)
 
+---
+
+## `rgen-cli make store <store-name>`
+
+Generates a Redux store slice in `src/store`.
+
+```sh
+rgen-cli make store auth
+```
+
+### 🛠️ What It Does
+
+- Initialize Redux store (`store/index.tsx`)
+- Add slice in `store/state/<store-name>/<StoreName>.ts`
+- Add typed hooks (TypeScript only) in `store/state/hooks.ts`
+
+### 📦 Auto-Installed Packages
+
+- `react-redux`
+- `@reduxjs/toolkit`
+
+### ✅ Example
 
 ```
+src/store/index.tsx
+src/store/state/auth/Auth.ts
+src/store/state/hooks.ts
+```
+
+### ! Important
+
+Make sure your app uses the generated store:
+
+```tsx
+import {Provider} from 'react-redux'
+import store from '@/store'
+
+createRoot(document.getElementById('root')!).render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+)
+```
+
+[Back to top](#table-of-contents)
+
+---
+
+## `rgen-cli make form <form-name>`
+
+Scaffolds a form using **React Hook Form** + **Zod** in the page context.
+
+```sh
+rgen-cli make form login -p auth
+```
+
+### 🛠️ What It Does
+
+- Creates Zod schema (`login.schema.ts`)
+- Creates hook (`useLoginForm.ts`)
+- Creates form component (`LoginForm.tsx`)
+- Organizes files under `src/pages/<page-name>/forms/`
+
+### 📦 Auto-Installed Packages
+
+- `react-hook-form`
+- `zod`
+- `@hookform/resolvers`
+
+### ✅ Example
+
+```
+src/pages/auth/forms/
+├── login.schema.ts
+├── useLoginForm.ts
+└── LoginForm.tsx
+```
+
+[Back to top](#table-of-contents)
+
+---

@@ -123,7 +123,7 @@ import { setValue } from '@/state/${this.uname}'
       this.cmd.log(`${chalk.blue('[+]')} Creating new store ${this.uname} - ${chalk.blue(storePath)}`)
     } catch (err: unknown) {
       if (err instanceof Error) {
-        this.cmd.error(`${chalk.red(err)}`)
+        this.cmd.error(err)
       }
     }
   }

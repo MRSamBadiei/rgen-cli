@@ -5,14 +5,14 @@ import {Command} from '@oclif/core'
 import chalk from 'chalk'
 import {spawn} from 'child_process'
 
-export type BuildType = 'contexts' | 'hooks' | 'routes' | 'layouts' | 'components' | 'pages' | 'store'
+export type BuildType = 'contexts' | 'hooks' | 'routes' | 'layouts' | 'components' | 'pages' | 'store' | 'forms'
 
 export default class Build {
   public name: string = ''
   public uname: string = ''
   public baseDir: string = ''
   public rootDir: string = ''
-  public type: string
+  public type: BuildType
   public cmd: Command
   public typescript: boolean = true
   public flags: any
@@ -23,6 +23,9 @@ export default class Build {
   constructor(cmd: Command, name: string, type: BuildType, flags?: any) {
     this.cmd = cmd
     this.name = name.trim().toLowerCase()
+    if (!/^[a-z][a-z0-9\-.]*$/.test(this.name)) {
+      cmd.error("Invalid name: must start with a letter and can only contain letters, numbers, '-' and '.'")
+    }
     this.type = type
     this.flags = flags
   }
@@ -63,6 +66,25 @@ export default class Build {
     // * Check if typescipt is installed
     if (!deps.typescript) {
       this.typescript = false
+    }
+
+    if (this.type === 'forms' && !deps['@hookform/resolvers'] && !deps['react-hook-form'] && !deps['zod']) {
+      /*const install = await this.promptInstall('')
+      if (!install) {
+        this.cmd.error(' is required.')
+      }*/
+
+      this.cmd.log(chalk.blue('[+] Installing react-hook-form zod @hookform/resolvers...'))
+      await new Promise<void>((resolve, reject) => {
+        const child = spawn('npm', ['install', 'react-hook-form', 'zod', '@hookform/resolvers'], {stdio: 'inherit'})
+        child.on('exit', (code) => {
+          if (code === 0) resolve()
+          else reject(new Error('Failed to install react-hook-form zod @hookform/resolvers.'))
+        })
+        child.on('error', reject)
+      })
+
+      this.cmd.log(chalk.green('[+] Installed react-hook-form zod @hookform/resolvers successfully.'))
     }
 
     if (this.type === 'routes' && !deps['react-router']) {
@@ -108,7 +130,19 @@ export default class Build {
     }
 
     this.uname = this.name.charAt(0).toUpperCase() + this.name.slice(1)
-    this.rootDir = path.join(process.cwd(), this.defaults.base, this.type)
+
+    // * this.rootDir
+    switch (this.type) {
+      case 'forms':
+        if (!this.flags.page) {
+          throw new Error('page name must be provided')
+        }
+        this.rootDir = path.join(process.cwd(), this.defaults.base, 'pages', this.flags.page, this.type)
+        break
+      default:
+        this.rootDir = path.join(process.cwd(), this.defaults.base, this.type)
+    }
+
     this.baseDir = path.join(this.rootDir, this.name.toLowerCase())
 
     // * '.' Rule
@@ -136,7 +170,7 @@ export default class Build {
         .map((e) => e.charAt(0).toUpperCase() + e.slice(1))
         .join('')
       // baseDir
-      this.baseDir = path.join(process.cwd(), this.defaults.base, this.type)
+      this.baseDir = path.join(this.rootDir, this.name)
     }
 
     if (this.type === 'store') {

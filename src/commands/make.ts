@@ -2,10 +2,15 @@ import {Command} from '@oclif/core'
 import inquirer from 'inquirer'
 import chalk from 'chalk'
 import {execSync} from 'node:child_process'
+import path from 'node:path'
+import fs from 'node:fs'
+import {checkUpdate} from '../libs/update.js'
 
 export default class Make extends Command {
   public async run(): Promise<void> {
-    const makes = ['component', 'hook', 'layout', 'page', 'route', 'context', 'store']
+    await checkUpdate(this)
+
+    const makes = ['component', 'context', 'hook', 'layout', 'page', 'route', 'form', 'store']
     const flags: string[] = []
 
     // Step 1: Ask user which type to create
@@ -32,8 +37,35 @@ export default class Make extends Command {
     this.log(chalk.green(`[+] Running "make ${type} ${name}"...`))
 
     // *
+    if (type === 'form') {
+      const pagesPath = path.join(process.cwd(), 'src', 'pages')
+      if (!fs.existsSync(pagesPath)) {
+        this.error(chalk.red(`[✖] No "pages" folder found at ${pagesPath}\nCreate a page first`))
+      }
+
+      const pages = fs.readdirSync(pagesPath).filter((f) => fs.statSync(path.join(pagesPath, f)).isDirectory())
+
+      if (pages.length === 0) {
+        this.error(`[✖] No pages found inside "pages/" - Create a page first`)
+      }
+
+      const {selectedPage} = await inquirer.prompt([
+        {
+          type: 'list',
+          name: 'selectedPage',
+          message: 'Select the page folder for this form:',
+          choices: pages,
+        },
+      ])
+
+      if (selectedPage) {
+        flags.push('-p', selectedPage)
+      }
+    }
+
+    // *
     if (type === 'route') {
-      const pageAnswer = await inquirer.prompt([
+      const {createPage} = await inquirer.prompt([
         {
           type: 'confirm',
           name: 'createPage',
@@ -42,7 +74,7 @@ export default class Make extends Command {
         },
       ])
 
-      if (pageAnswer.createPage) {
+      if (createPage) {
         flags.push('-p')
       }
     }
@@ -50,14 +82,13 @@ export default class Make extends Command {
     try {
       let cmd = `rgen-cli make ${type} ${name}`
 
-      if (type === 'route' && flags.includes('-p')) {
-        cmd += ' -p'
+      if ((type === 'route' || type === 'form') && flags.includes('-p')) {
+        cmd += ` ${flags.join('')}`
       }
 
       execSync(cmd, {stdio: 'inherit'})
     } catch (err: any) {
-      console.log(chalk.red(`[✖] ${err.message}`))
-      process.exit(1)
+      this.error(`[✖] ${err.message}`)
     }
   }
 }

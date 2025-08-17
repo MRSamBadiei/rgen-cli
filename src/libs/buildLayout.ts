@@ -24,7 +24,7 @@ export function ${this.uname}Layout() {
       this.cmd.log(`${chalk.blue('[+]')} Creating new ${this.uname}Layout - ${chalk.blue(layoutPath)}`)
     } catch (err: unknown) {
       if (err instanceof Error) {
-        this.cmd.error(`${chalk.red(err)}`)
+        this.cmd.error(err)
       }
     }
   }

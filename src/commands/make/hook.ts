@@ -3,7 +3,7 @@ import Hook from '../../libs/buildHook.js'
 
 export default class MakeHook extends Command {
   static override args = {
-    name: Args.string({description: 'name of hook', required: true}),
+    name: Args.string({description: 'Name of the hook', required: true}),
   }
   static override description = 'Generate a React hook'
 

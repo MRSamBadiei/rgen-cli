@@ -88,7 +88,7 @@ export * from './types'`
       this.cmd.log(`${chalk.blue('[+]')} Creating new index - ${chalk.blue(indexPath)}`)
     } catch (err: unknown) {
       if (err instanceof Error) {
-        this.cmd.error(`${chalk.red(err)}`)
+        this.cmd.error(err)
       }
     }
   }

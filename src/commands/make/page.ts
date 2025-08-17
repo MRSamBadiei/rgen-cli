@@ -3,7 +3,7 @@ import Page from '../../libs/buildPage.js'
 
 export default class MakePage extends Command {
   static override args = {
-    name: Args.string({description: 'name of page', required: true}),
+    name: Args.string({description: 'Name of the page', required: true}),
   }
   static override description = 'Generate a React page'
 

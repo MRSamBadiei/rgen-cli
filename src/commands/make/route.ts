@@ -3,7 +3,7 @@ import Route from '../../libs/buildRoute.js'
 
 export default class MakeRoute extends Command {
   static override args = {
-    name: Args.string({description: 'name of route', required: true}),
+    name: Args.string({description: 'Name of the route', required: true}),
   }
   static override description = 'Generate a React route - react-router required'
 

@@ -3,7 +3,7 @@ import Context from '../../libs/buildContext.js'
 
 export default class MakeContext extends Command {
   static override args = {
-    name: Args.string({description: 'name of context', required: true}),
+    name: Args.string({description: 'Name of the context', required: true}),
   }
   static override description = 'Generate a React context'
 
