@@ -408,7 +408,7 @@ createRoot(document.getElementById('root')!).render(
 
 ---
 
-## `rgen-cli make form <form-name>`
+## `rgen-cli make form <form-name> -p <page-name>`
 
 Scaffolds a form using **React Hook Form** + **Zod** in the page context.
 
