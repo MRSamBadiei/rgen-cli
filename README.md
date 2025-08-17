@@ -322,9 +322,9 @@ rgen-cli make route dashboard
 
 ### 🏷️ Flags
 
-| Flag | Description                                   |
-| ---- | --------------------------------------------- |
-| `-p` | Optional. Creates a page along with the route |
+| Flag | Description                                       |
+| ---- | ------------------------------------------------- |
+| `-p` | **Optional**. Creates a page along with the route |
 
 ### 🛠️ What It Does
 
@@ -415,6 +415,12 @@ Scaffolds a form using **React Hook Form** + **Zod** in the page context.
 ```sh
 rgen-cli make form login -p auth
 ```
+
+### 🏷️ Flags
+
+| Flag | Description                                      |
+| ---- | ------------------------------------------------ |
+| `-p` | **Required**. Creates a form inside @/pages/auth |
 
 ### 🛠️ What It Does
 
