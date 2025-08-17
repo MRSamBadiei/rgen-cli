@@ -20,7 +20,7 @@ export default class Route extends Build {
       if (!existsSync(indexPath)) {
         const indexTemplate = `import { BrowserRouter, Routes } from 'react-router'
 
-const routeModules = import.meta.glob('./**/*.${this.typescript ? 'tsx' : 'jsx'}', { eager: true })
+const routeModules = import.meta.glob('./**/*.{jsx,tsx}', { eager: true })
 
 export default function AppRoutes() {
   return (
@@ -81,6 +81,8 @@ export default [
 ]`
 
       fs.writeFileSync(routePath, route)
+
+      this.cmd.log(`${chalk.blue('[+]')} Creating new route ${this.uname} - ${chalk.blue(routePath)}`)
     } catch (err: unknown) {
       if (err instanceof Error) {
         this.cmd.error(`${chalk.red(err)}`)

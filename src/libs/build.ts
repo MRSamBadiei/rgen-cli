@@ -5,7 +5,7 @@ import {Command} from '@oclif/core'
 import chalk from 'chalk'
 import {spawn} from 'child_process'
 
-export type BuildType = 'contexts' | 'hooks' | 'routes' | 'layouts' | 'components' | 'pages'
+export type BuildType = 'contexts' | 'hooks' | 'routes' | 'layouts' | 'components' | 'pages' | 'store'
 
 export default class Build {
   public name: string = ''
@@ -66,10 +66,10 @@ export default class Build {
     }
 
     if (this.type === 'routes' && !deps['react-router']) {
-      const install = await this.promptInstall('react-router')
+      /*const install = await this.promptInstall('react-router')
       if (!install) {
         this.cmd.error('react-router is required.')
-      }
+      }*/
 
       this.cmd.log(chalk.blue('[+] Installing react-router...'))
       await new Promise<void>((resolve, reject) => {
@@ -84,13 +84,32 @@ export default class Build {
       this.cmd.log(chalk.green('[+] Installed react-router successfully.'))
     }
 
+    if (this.type === 'store' && !deps['react-redux'] && !deps['@reduxjs/toolkit']) {
+      /*const install = await this.promptInstall('react-redux')
+      if (!install) {
+        this.cmd.error('react-redux is required.')
+      }*/
+
+      this.cmd.log(chalk.blue('[+] Installing react-redux and @reduxjs/toolkit...'))
+      await new Promise<void>((resolve, reject) => {
+        const child = spawn('npm', ['install', 'react-redux', '@reduxjs/toolkit'], {stdio: 'inherit'})
+        child.on('exit', (code) => {
+          if (code === 0) resolve()
+          else reject(new Error('Failed to install react-redux or @reduxjs/toolkit.'))
+        })
+        child.on('error', reject)
+      })
+
+      this.cmd.log(chalk.green('[+] Installed react-redux and @reduxjs/toolkit successfully.'))
+    }
+
     if (!this.name) {
       throw new Error('name must be provided')
     }
 
     this.uname = this.name.charAt(0).toUpperCase() + this.name.slice(1)
     this.rootDir = path.join(process.cwd(), this.defaults.base, this.type)
-    this.baseDir = path.join(this.rootDir, `${this.name.toLowerCase()}`)
+    this.baseDir = path.join(this.rootDir, this.name.toLowerCase())
 
     // * '.' Rule
     if (this.name.includes('.')) {
@@ -120,7 +139,11 @@ export default class Build {
       this.baseDir = path.join(process.cwd(), this.defaults.base, this.type)
     }
 
-    fs.mkdirSync(this.baseDir, {recursive: true})
+    if (this.type === 'store') {
+      fs.mkdirSync(path.join(this.rootDir, 'state', this.name.toLowerCase()), {recursive: true})
+    } else {
+      fs.mkdirSync(this.baseDir, {recursive: true})
+    }
   }
 
   private async promptInstall(packageName: string): Promise<boolean> {

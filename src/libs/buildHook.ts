@@ -13,6 +13,7 @@ export default class Hook extends Build {
     try {
       await this.init()
 
+      const hookPath = path.join(this.baseDir, `use${this.uname}.${this.typescript ? 'ts' : 'js'}`)
       const hookTemplate = `import { useState, useEffect } from 'react'
 
 export function use${this.uname}${this.typescript ? '<T>' : ''}() {
@@ -24,8 +25,6 @@ export function use${this.uname}${this.typescript ? '<T>' : ''}() {
 
   return { state, setState }
 }`
-
-      const hookPath = path.join(this.baseDir, `use${this.uname}.${this.typescript ? 'ts' : 'js'}`)
 
       fs.writeFileSync(hookPath, hookTemplate)
 

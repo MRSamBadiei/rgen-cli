@@ -13,6 +13,7 @@ export default class Page extends Build {
     try {
       await this.init()
 
+      const pagePath = path.join(this.baseDir, `index.${this.typescript ? 'tsx' : 'jsx'}`)
       const pageTemplate = `import { cn } from "@/libs/utils"
 
 export default function ${this.uname}Page() {
@@ -33,10 +34,7 @@ export default function ${this.uname}Page() {
       </div>
     </div>
   )
-}
-`
-
-      const pagePath = path.join(this.baseDir, `index.${this.typescript ? 'tsx' : 'jsx'}`)
+}`
       fs.writeFileSync(pagePath, pageTemplate)
 
       this.cmd.log(`${chalk.blue('[+]')} Creating new page ${this.uname} - ${chalk.blue(pagePath)}`)

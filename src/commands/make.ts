@@ -5,7 +5,7 @@ import {execSync} from 'node:child_process'
 
 export default class Make extends Command {
   public async run(): Promise<void> {
-    const makes = ['component', 'hook', 'layout', 'page', 'route', 'context']
+    const makes = ['component', 'hook', 'layout', 'page', 'route', 'context', 'store']
     const flags: string[] = []
 
     // Step 1: Ask user which type to create

@@ -13,6 +13,7 @@ export default class Component extends Build {
     try {
       await this.init()
 
+      const componentPath = path.join(this.baseDir, `${this.uname}.${this.typescript ? 'tsx' : 'jsx'}`)
       const componentTemplate = `import { cn } from '@/libs/utils'
 ${
   this.typescript
@@ -22,8 +23,6 @@ ${
 export function ${this.uname}({ className, ...props }${this.typescript ? ' : Props' : ''}) {
     <div className={cn(className)} {...props}/>
 }`
-
-      const componentPath = path.join(this.baseDir, `${this.uname}.${this.typescript ? 'tsx' : 'jsx'}`)
 
       fs.writeFileSync(componentPath, componentTemplate)
 
