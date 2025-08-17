@@ -18,6 +18,7 @@ export default class Build {
   public flags: any
   private defaults = {
     base: 'src/',
+    debug: false,
   }
 
   constructor(cmd: Command, name: string, type: BuildType, flags?: any) {
@@ -30,17 +31,24 @@ export default class Build {
     this.flags = flags
   }
 
+  public cout(str: string) {
+    if (this.defaults.debug) {
+      this.cmd.log(str)
+    }
+  }
+
   async init() {
     // * check for rgen-cli.json
     const reactUtilsPath = path.join(process.cwd(), 'rgen-cli.json')
     if (fs.existsSync(reactUtilsPath)) {
-      this.cmd.log(`${chalk.blue('[+]')} Found rgen-cli config at: "${chalk.blue(reactUtilsPath)}"`)
+      this.cout(`${chalk.blue('[+]')} Found rgen-cli config at: "${chalk.blue(reactUtilsPath)}"`)
 
       const reactUtilsDefaults = JSON.parse(fs.readFileSync(reactUtilsPath, 'utf-8'))
+      if (reactUtilsDefaults.debug) {
+        this.defaults.debug = reactUtilsDefaults.debug
+      }
       if (reactUtilsDefaults.base) {
-        this.cmd.log(
-          `${chalk.blue('[+]')} Overriding default base directory → "${chalk.blue(reactUtilsDefaults.base)}"`,
-        )
+        this.cout(`${chalk.blue('[+]')} Overriding default base directory → "${chalk.blue(reactUtilsDefaults.base)}"`)
         this.defaults.base = reactUtilsDefaults.base
       }
     }

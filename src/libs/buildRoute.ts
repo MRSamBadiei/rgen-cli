@@ -14,8 +14,61 @@ export default class Route extends Build {
   async setup() {
     try {
       await this.init()
-      //
 
+      // * --------- root [Route] --------- *
+      const rootPath = path.join(this.rootDir, 'root', `index.${this.typescript ? 'tsx' : 'jsx'}`)
+      if (!existsSync(rootPath)) {
+        const page = new Page(this.cmd, 'root')
+        await page.setup()
+
+        const template = `import { Route } from "react-router";
+import RootPage from '@/pages/root'
+
+export default [
+  <Route index element={<RootPage />} />
+]`
+
+        mkdirSync(path.join(this.rootDir, 'root'), {recursive: true})
+        writeFileSync(rootPath, template)
+      }
+
+      // * --------- 400 [Route]--------- *
+      const route404Path = path.join(this.rootDir, 'not-found', `index.${this.typescript ? 'tsx' : 'jsx'}`)
+      if (!existsSync(route404Path)) {
+        const page = new Page(this.cmd, 'not-found')
+        page.templateType = '404'
+        await page.setup()
+
+        const template = `import { Route } from "react-router";
+import NotFoundPage from '@/pages/not-found'
+
+export default [
+  <Route path="*" element={<NotFoundPage />} />
+]`
+
+        mkdirSync(path.join(this.rootDir, 'not-found'), {recursive: true})
+        writeFileSync(route404Path, template)
+      }
+
+      if (this.flags.page) {
+        const page = new Page(this.cmd, this.name)
+        await page.setup()
+      }
+
+      const routePath = path.join(this.baseDir, `index.${this.typescript ? 'tsx' : 'jsx'}`)
+      const route = `import { Route } from "react-router";
+${this.flags.page ? `import ${this.uname}Page from '@/pages/${this.name}'\n` : ''}     
+export default [
+  <Route key="${this.name}" path="/${this.name}" element={${
+        this.flags.page ? `<${this.uname}Page />` : `<div>/${this.name}</div>`
+      }} />
+]`
+
+      fs.writeFileSync(routePath, route)
+
+      this.cmd.log(`${chalk.blue('[+]')} Creating new route ${this.uname} - ${chalk.blue(routePath)}`)
+
+      // * --------- index [Route] --------- *
       const indexPath = path.join(this.rootDir, `index.${this.typescript ? 'tsx' : 'jsx'}`)
       if (!existsSync(indexPath)) {
         const indexTemplate = `import { BrowserRouter, Routes } from 'react-router'
@@ -49,40 +102,6 @@ export default function AppRoutes() {
       </StrictMode>
     );`)
       }
-
-      const rootPath = path.join(this.rootDir, 'root', `index.${this.typescript ? 'tsx' : 'jsx'}`)
-      if (!existsSync(rootPath)) {
-        const page = new Page(this.cmd, 'root')
-        await page.setup()
-
-        const rootTemplate = `import { Route } from "react-router";
-import RootPage from '@/pages/root'
-
-export default [
-  <Route index element={<RootPage />} />
-]`
-
-        mkdirSync(path.join(this.rootDir, 'root'), {recursive: true})
-        writeFileSync(rootPath, rootTemplate)
-      }
-
-      if (this.flags.page) {
-        const page = new Page(this.cmd, this.name)
-        await page.setup()
-      }
-
-      const routePath = path.join(this.baseDir, `index.${this.typescript ? 'tsx' : 'jsx'}`)
-      const route = `import { Route } from "react-router";
-${this.flags.page ? `import ${this.uname}Page from '@/pages/${this.name}'\n` : ''}     
-export default [
-  <Route key="${this.name}" path="/${this.name}" element={${
-        this.flags.page ? `<${this.uname}Page />` : `<div>/${this.name}</div>`
-      }} />
-]`
-
-      fs.writeFileSync(routePath, route)
-
-      this.cmd.log(`${chalk.blue('[+]')} Creating new route ${this.uname} - ${chalk.blue(routePath)}`)
     } catch (err: unknown) {
       if (err instanceof Error) {
         this.cmd.error(err)

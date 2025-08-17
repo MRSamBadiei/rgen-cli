@@ -6,7 +6,7 @@ import chalk from 'chalk'
 
 export async function checkUpdate(cmd: Command) {
   const cacheFile = path.join(cmd.config.configDir, 'last-update.json')
-  cmd.log(cacheFile)
+  //cmd.log(cacheFile)
   let lastCheck = 0
 
   if (fs.existsSync(cacheFile)) {

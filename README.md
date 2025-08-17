@@ -328,7 +328,7 @@ rgen-cli make route dashboard
 
 ### 🛠️ What It Does
 
-- Initializes routing system (if not exists)
+- Initializes routing system + 404 page (if not exists)
 - Creates `routes/<RouteName>/index.tsx`
 - Adds `<Route>` for the path
 - Optionally generates page if `-p` flag is used

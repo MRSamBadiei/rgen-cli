@@ -75,7 +75,7 @@ export function cn(...inputs: ClassValue[]) {
       JSON.stringify(
         {
           base: 'src/',
-          debug: true,
+          debug: false,
         },
         null,
         2,
