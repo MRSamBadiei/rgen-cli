@@ -3,10 +3,11 @@ import fs from 'node:fs'
 import Build from './build.js'
 import {Command} from '@oclif/core'
 import chalk from 'chalk'
+import {generateComponent} from './ai/gemini.js'
 
 export default class Hook extends Build {
-  constructor(cmd: Command, name: string) {
-    super(cmd, name, 'hooks')
+  constructor(cmd: Command, name: string, flags: unknown = {}) {
+    super(cmd, name, 'hooks', flags)
   }
 
   async setup() {
@@ -26,9 +27,14 @@ export function use${this.uname}${this.typescript ? '<T>' : ''}() {
   return { state, setState }
 }`
 
-      fs.writeFileSync(hookPath, hookTemplate)
+      if (this.flags.desc) {
+        const t = await generateComponent(hookTemplate, this.type, this.flags.desc, this.geminiApiKey, this.typescript)
+        fs.writeFileSync(hookPath, t)
+      } else {
+        fs.writeFileSync(hookPath, hookTemplate)
+      }
 
-      this.cmd.log(`${chalk.blue('[+]')} Creating new use${this.uname} - ${chalk.blue(hookPath)}`)
+      this.cmd.log(`${chalk.blue('[+]')} Creating new hook use${this.uname} - ${chalk.blue(hookPath)}`)
     } catch (err: unknown) {
       if (err instanceof Error) {
         this.cmd.error(err)

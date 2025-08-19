@@ -3,14 +3,15 @@ import Build from './build.js'
 import {Command} from '@oclif/core'
 import path from 'node:path'
 import fs from 'node:fs'
+import {generateComponent} from './ai/gemini.js'
 
 type templateType = '404' | undefined
 
 export default class Page extends Build {
   templateType: templateType = undefined
 
-  constructor(cmd: Command, name: string) {
-    super(cmd, name, 'pages')
+  constructor(cmd: Command, name: string, flags: unknown = {}) {
+    super(cmd, name, 'pages', flags)
   }
 
   private template(type: templateType) {
@@ -65,7 +66,19 @@ export default function ${this.uname}Page() {
       await this.init()
 
       const pagePath = path.join(this.baseDir, `index.${this.typescript ? 'tsx' : 'jsx'}`)
-      fs.writeFileSync(pagePath, this.template(this.templateType))
+
+      if (this.flags.desc) {
+        const t = await generateComponent(
+          this.template(this.templateType),
+          this.type,
+          this.flags.desc,
+          this.geminiApiKey,
+          this.typescript,
+        )
+        fs.writeFileSync(pagePath, t)
+      } else {
+        fs.writeFileSync(pagePath, this.template(this.templateType))
+      }
 
       this.cmd.log(`${chalk.blue('[+]')} Creating new page ${this.uname} - ${chalk.blue(pagePath)}`)
     } catch (err: unknown) {

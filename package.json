@@ -1,17 +1,19 @@
 {
   "name": "rgen-cli",
   "description": "A developer CLI for initializing React projects, managing utilities, and scaffolding components, hooks, pages, layouts, routes, and contexts quickly.",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "author": "Sam Badiei",
   "bin": {
     "rgen-cli": "./bin/run.js"
   },
   "bugs": "https://github.com/mrsambadiei/rgen-cli/issues",
   "dependencies": {
+    "@google/genai": "^1.14.0",
     "@oclif/core": "^4",
     "@oclif/plugin-help": "^6",
     "@oclif/plugin-plugins": "^5",
     "chalk": "^5.5.0",
+    "dotenv": "^17.2.1",
     "inquirer": "^12.9.2",
     "jsonc-parser": "^3.3.1"
   },
@@ -56,7 +58,9 @@
     "react-routes",
     "typescript",
     "automation",
-    "developer-tool"
+    "developer-tool",
+    "Gemini",
+    "ai"
   ],
   "license": "MIT",
   "main": "dist/index.js",

@@ -5,7 +5,7 @@ import {Command} from '@oclif/core'
 import chalk from 'chalk'
 
 export default class Form extends Build {
-  constructor(cmd: Command, name: string, flags?: any) {
+  constructor(cmd: Command, name: string, flags: unknown = {}) {
     super(cmd, name, 'forms', flags)
   }
 

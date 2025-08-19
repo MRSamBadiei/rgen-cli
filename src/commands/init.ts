@@ -1,18 +1,13 @@
 import {Command} from '@oclif/core'
-
 import path from 'node:path'
 import fs from 'node:fs'
 import chalk from 'chalk'
 import {execSync} from 'node:child_process'
 import {parse} from 'jsonc-parser'
 import {checkUpdate} from '../libs/update.js'
+import {RGenDefaults} from '../libs/types/type.js'
 
 export default class Init extends Command {
-  static override args = {}
-  static override description = 'describe the command here'
-  static override examples = ['<%= config.bin %> <%= command.id %>']
-  static override flags = {}
-
   public async run(): Promise<void> {
     await checkUpdate(this)
 
@@ -76,7 +71,11 @@ export function cn(...inputs: ClassValue[]) {
         {
           base: 'src/',
           debug: false,
-        },
+          /* AI stuff */
+          useAI: false,
+          model: 'Gemini',
+          /* */
+        } satisfies RGenDefaults,
         null,
         2,
       ),

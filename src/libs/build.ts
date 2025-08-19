@@ -4,8 +4,9 @@ import readline from 'node:readline'
 import {Command} from '@oclif/core'
 import chalk from 'chalk'
 import {spawn} from 'child_process'
-
-export type BuildType = 'contexts' | 'hooks' | 'routes' | 'layouts' | 'components' | 'pages' | 'store' | 'forms'
+import dotenv from 'dotenv'
+import {BuildType, RGenDefaults} from './types/type.js'
+import {defaults} from './defaults.js'
 
 export default class Build {
   public name: string = ''
@@ -16,12 +17,15 @@ export default class Build {
   public cmd: Command
   public typescript: boolean = true
   public flags: any
-  private defaults = {
+  public defaults: RGenDefaults = {
     base: 'src/',
     debug: false,
+    useAI: false,
+    model: 'Gemini',
   }
+  public geminiApiKey: string = ''
 
-  constructor(cmd: Command, name: string, type: BuildType, flags?: any) {
+  constructor(cmd: Command, name: string, type: BuildType, flags?: unknown) {
     this.cmd = cmd
     this.name = name.trim().toLowerCase()
     if (!/^[a-z][a-z0-9\-.]*$/.test(this.name)) {
@@ -37,21 +41,62 @@ export default class Build {
     }
   }
 
-  async init() {
-    // * check for rgen-cli.json
-    const reactUtilsPath = path.join(process.cwd(), 'rgen-cli.json')
-    if (fs.existsSync(reactUtilsPath)) {
-      this.cout(`${chalk.blue('[+]')} Found rgen-cli config at: "${chalk.blue(reactUtilsPath)}"`)
+  private manageDotEnv() {
+    const envPath = path.resolve(process.cwd(), '.env')
 
-      const reactUtilsDefaults = JSON.parse(fs.readFileSync(reactUtilsPath, 'utf-8'))
-      if (reactUtilsDefaults.debug) {
-        this.defaults.debug = reactUtilsDefaults.debug
-      }
-      if (reactUtilsDefaults.base) {
-        this.cout(`${chalk.blue('[+]')} Overriding default base directory → "${chalk.blue(reactUtilsDefaults.base)}"`)
-        this.defaults.base = reactUtilsDefaults.base
-      }
+    if (!fs.existsSync(envPath)) {
+      this.cout(`${chalk.red('[x] .env not found at:')} ${chalk.blue(envPath)}`)
+      return
     }
+
+    this.cout(`${chalk.green('[+] .env found at:')} ${chalk.blue(envPath)}`)
+    dotenv.config({path: envPath, quiet: true})
+
+    this.geminiApiKey = process.env.GEMINI_API_KEY ?? ''
+
+    if (this.geminiApiKey) {
+      this.cout(`${chalk.green('[+] GEMINI_API_KEY loaded:')} ${chalk.yellow(this.geminiApiKey)}`)
+    } else {
+      this.cout(`${chalk.red('[x] GEMINI_API_KEY not found in .env at:')} ${chalk.blue(envPath)}`)
+    }
+  }
+
+  private manageDefaults() {
+    const reactUtilsDefaults = defaults()
+    /*
+     * Overriding Default debug
+     */
+    if (reactUtilsDefaults.debug) {
+      this.cout(`${chalk.blue('[+]')} Overriding default debug → "${chalk.blue(reactUtilsDefaults.debug)}"`)
+      this.defaults.debug = reactUtilsDefaults.debug
+    }
+    /*
+     * Overriding Default base
+     */
+    if (reactUtilsDefaults.base) {
+      this.cout(`${chalk.blue('[+]')} Overriding default base directory → "${chalk.blue(reactUtilsDefaults.base)}"`)
+      this.defaults.base = reactUtilsDefaults.base
+    }
+    /*
+     * Overriding Default useAI
+     */
+    if (reactUtilsDefaults.useAI) {
+      this.cout(`${chalk.blue('[+]')} Overriding useAI → "${chalk.blue(reactUtilsDefaults.useAI)}"`)
+      this.defaults.useAI = reactUtilsDefaults.useAI
+    }
+    /*
+     * Overriding Default model
+     */
+    if (reactUtilsDefaults.model) {
+      this.cout(`${chalk.blue('[+]')} Overriding model → "${chalk.blue(reactUtilsDefaults.model)}"`)
+      this.defaults.model = reactUtilsDefaults.model
+    }
+  }
+
+  async init() {
+    // *
+    this.manageDotEnv()
+    this.manageDefaults()
 
     // * Check for package.json
     const pkgPath = path.join(process.cwd(), 'package.json')

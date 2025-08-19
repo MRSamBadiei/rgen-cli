@@ -5,12 +5,18 @@ import {execSync} from 'node:child_process'
 import path from 'node:path'
 import fs from 'node:fs'
 import {checkUpdate} from '../libs/update.js'
+import {defaults} from '../libs/defaults.js'
 
 export default class Make extends Command {
   public async run(): Promise<void> {
     await checkUpdate(this)
 
+    const _defaults = defaults()
+
+    // AI available only [component hook layout page]
+    const aiAvailable = ['component', 'hook', 'layout', 'page']
     const makes = ['component', 'context', 'hook', 'layout', 'page', 'route', 'form', 'store']
+
     const flags: string[] = []
 
     // Step 1: Ask user which type to create
@@ -34,9 +40,8 @@ export default class Make extends Command {
     ])
 
     // Step 3: Delegate to the proper subcommand
-    this.log(chalk.green(`[+] Running "make ${type} ${name}"...`))
 
-    // *
+    // * form
     if (type === 'form') {
       const pagesPath = path.join(process.cwd(), 'src', 'pages')
       if (!fs.existsSync(pagesPath)) {
@@ -63,7 +68,7 @@ export default class Make extends Command {
       }
     }
 
-    // *
+    // * route
     if (type === 'route') {
       const {createPage} = await inquirer.prompt([
         {
@@ -79,16 +84,38 @@ export default class Make extends Command {
       }
     }
 
+    // * AI
+    if ((aiAvailable.includes(type) || (type === 'route' && flags.includes('-p'))) && _defaults.useAI) {
+      const {desc} = await inquirer.prompt([
+        {
+          type: 'input',
+          name: 'desc',
+          message: 'Describe what you want the AI to generate (leave empty to skip):',
+          default: '',
+        },
+      ])
+
+      if (desc) {
+        flags.push('--desc', `"${desc}"`)
+      }
+    }
+
     try {
       let cmd = `rgen-cli make ${type} ${name}`
 
-      if ((type === 'route' || type === 'form') && flags.includes('-p')) {
-        cmd += ` ${flags.join('')}`
+      if (aiAvailable.includes(type) && flags.includes('--desc')) {
+        cmd += ` ${flags.join(' ')}`
       }
+
+      if ((type === 'route' || type === 'form') && flags.includes('-p')) {
+        cmd += ` ${flags.join(' ')}`
+      }
+
+      this.log(chalk.green(`[>] ${cmd}`))
 
       execSync(cmd, {stdio: 'inherit'})
     } catch (err: any) {
-      this.error(`[✖] ${err.message}`)
+      this.error(`[x] ${err.message}`)
     }
   }
 }

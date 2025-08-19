@@ -7,7 +7,7 @@ import {existsSync} from 'node:fs'
 import Page from './buildPage.js'
 
 export default class Route extends Build {
-  constructor(cmd: Command, name: string, flags?: any) {
+  constructor(cmd: Command, name: string, flags: unknown = {}) {
     super(cmd, name, 'routes', flags)
   }
 
@@ -51,7 +51,9 @@ export default [
       }
 
       if (this.flags.page) {
-        const page = new Page(this.cmd, this.name)
+        const page = new Page(this.cmd, this.name, {
+          desc: this.flags.desc,
+        })
         await page.setup()
       }
 

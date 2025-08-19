@@ -1,4 +1,4 @@
-# ⚡️ rgen-cli
+# ⚡️ rgen-cli + AI (Gemini)
 
 > 🚧 **This project is still in Beta** – expect breaking changes.
 
@@ -20,8 +20,9 @@ Whether you're starting fresh or scaling fast, `rgen-cli` keeps your codebase cl
 - [Getting Started](#getting-started)
 
   - [Initialize Your Project](#🧭-initialize-your-project)
-  - [Add Path Aliases](#🔗-add-path-aliases)
-  - [Finish Tailwind Setup](#🎨-last-step---finish-tailwind-setup)
+  - [Add Path Aliases](#1.-add-path-aliases)
+  - [Finish Tailwind Setup](#2.-last-step---finish-tailwind-setup)
+  - [Setup Gemini AI Integration](#3.-setup-gemini-ai-integration)
 
 - [Rules](#rules)
 
@@ -41,7 +42,7 @@ Whether you're starting fresh or scaling fast, `rgen-cli` keeps your codebase cl
     - [`rgen-cli make page`](#rgen-cli-make-page-page-name)
     - [`rgen-cli make route`](#rgen-cli-make-route-route-name)
     - [`rgen-cli make store`](#rgen-cli-make-store-store-name)
-    - [`rgen-cli make form`](#rgen-cli-make-form-form-name)
+    - [`rgen-cli make form`](#rgen-cli-make-form-form-name-p-page-name)
 
 ---
 
@@ -74,9 +75,7 @@ Prepares your `src` directory and configuration files for use with `rgen-cli`.
 
 [Back to top](#table-of-contents)
 
----
-
-## 🔗 Add Path Aliases
+## 1. Add Path Aliases
 
 Add the following to your `vite.config.js` or `vite.config.ts`:
 
@@ -110,15 +109,41 @@ import Button from '../../components/Button'
 
 [Back to top](#table-of-contents)
 
----
-
-## 🎨 Last step - Finish Tailwind Setup
+## 2. Finish Tailwind Setup
 
 Follow the official guide: [TailwindCSS + Vite Installation](https://tailwindcss.com/docs/installation/using-vite)
 
 [Back to top](#table-of-contents)
 
----
+## 3. Setup Gemini AI Integration
+
+`rgen-cli` includes built-in support for **Gemini AI** to enhance your development workflow with intelligent code generation.
+
+### ⚙️ Step 1: Add Your API Key
+
+Create a `.env` file in the root of your project and add your Gemini API key:
+
+```env
+GEMINI_API_KEY=your-key-here
+```
+
+### ⚙️ Step 2: Enable AI in Configuration
+
+Open your `rgen-cli.json` file and set the `useAI` flag to `true`:
+
+```json
+{
+  "useAI": true
+}
+```
+
+### ✅ You're All Set!
+
+Once configured, `rgen-cli` will automatically use Gemini to assist with intelligent scaffolding and suggestions where applicable.
+
+> 💡 If you don’t have an API key yet, visit the Gemini developer portal to generate one. https://aistudio.google.com/app/apikey
+
+[Back to top](#table-of-contents)
 
 # Rules
 
@@ -188,24 +213,31 @@ rgen-cli make
 
 ## `rgen-cli make component <component-name>`
 
-Generates a new React component in `src/components`.
-
-```sh
-rgen-cli make component button
-```
+Generates a reusable React component inside `src/components`, with optional AI-powered scaffolding.
 
 ### 🛠️ What It Does
 
-- Creates `.tsx` or `.jsx` template based on project setup
-- Places files in `src/components/<component-name>/`
+- Creates a `.tsx` or `.jsx` file based on your project setup
+- Wraps the component in a folder named after your input
+- Optionally uses Gemini AI to generate component logic and styling based on your description
 
-### ✅ Example
+### 🏷️ Flags
 
-```sh
+| Flag     | Description                                                           |
+| -------- | --------------------------------------------------------------------- |
+| `--desc` | _Optional._ Describe what the AI should generate inside the component |
+
+### ✅ Examples
+
+```bash
+# Basic component
 rgen-cli make component button
+
+# Component with AI-generated logic and styles
+rgen-cli make component button --desc "blue button with hover effect"
 ```
 
-Generates:
+This will generate:
 
 ```
 src/components/button/Button.tsx
@@ -247,20 +279,40 @@ src/contexts/auth/index.ts
 
 ## `rgen-cli make hook <hook-name>`
 
-Generates a custom React hook in `src/hooks`.
-
-```sh
-rgen-cli make hook theme
-```
+Quickly generate a custom React hook inside `src/hooks`.
 
 ### 🛠️ What It Does
 
-- Create `use<HookName>.ts` or `.js`
+- Creates a file named `use<HookName>.ts` or `.js`
+- Includes a basic hook structure with `useState` and `useEffect`
+- Optionally uses AI to generate logic based on your description
 
-### ✅ Example
+### 🏷️ Flags
+
+| Flag     | Description                                                      |
+| -------- | ---------------------------------------------------------------- |
+| `--desc` | _Optional._ Describe what the AI should generate inside the hook |
+
+### ✅ Examples
+
+```bash
+# Basic hook
+rgen-cli make hook theme
+
+# Hook with AI-generated logic
+rgen-cli make hook window --desc "make a window resize hook"
+```
+
+This will generate:
 
 ```
 src/hooks/theme/useTheme.ts
+```
+
+or
+
+```
+src/hooks/window/useWindow.ts
 ```
 
 [Back to top](#table-of-contents)
@@ -269,17 +321,31 @@ src/hooks/theme/useTheme.ts
 
 ## `rgen-cli make layout <layout-name>`
 
-Generates a layout component in `src/layouts`.
-
-```sh
-rgen-cli make layout dashboard
-```
+Generates a layout component inside `src/layouts`, with optional AI-powered scaffolding.
 
 ### 🛠️ What It Does
 
-- Create `<LayoutName>Layout.tsx` or `.jsx`
+- Creates `<LayoutName>Layout.tsx` or `.jsx`
+- Includes a basic layout structure
+- Optionally uses Gemini AI to generate layout logic based on your description
 
-### ✅ Example
+### 🏷️ Flags
+
+| Flag     | Description                                                        |
+| -------- | ------------------------------------------------------------------ |
+| `--desc` | _Optional._ Describe what the AI should generate inside the layout |
+
+### ✅ Examples
+
+```bash
+# Basic layout
+rgen-cli make layout dashboard
+
+# Layout with AI-generated structure
+rgen-cli make layout dashboard --desc "create a layout with sidebar and header"
+```
+
+This will generate:
 
 ```
 src/layouts/dashboard/DashboardLayout.tsx
@@ -291,21 +357,41 @@ src/layouts/dashboard/DashboardLayout.tsx
 
 ## `rgen-cli make page <page-name>`
 
-Generates a page component in `src/pages`.
-
-```sh
-rgen-cli make page profile
-```
+Generates a fully functional page component inside `src/pages`, with optional AI-powered scaffolding.
 
 ### 🛠️ What It Does
 
-- Create `index.tsx` or `.jsx` inside folder named after page
-- Default export component named `<PageName>Page`
+- Creates a folder named after your page
+- Adds `index.tsx` or `index.jsx` inside it
+- Exports a default component named `<PageName>Page`
+- Optionally uses Gemini AI to generate page content based on your description
 
-### ✅ Example
+### 🏷️ Flags
+
+| Flag     | Description                                                      |
+| -------- | ---------------------------------------------------------------- |
+| `--desc` | _Optional._ Describe what the AI should generate inside the page |
+
+### ✅ Examples
+
+```bash
+# Basic page
+rgen-cli make page profile
+
+# Page with AI-generated content
+rgen-cli make page dashboard --desc "create a dashboard with user stats and recent activity"
+```
+
+This will generate:
 
 ```
 src/pages/profile/index.tsx
+```
+
+or
+
+```
+src/pages/dashboard/index.tsx
 ```
 
 [Back to top](#table-of-contents)
@@ -314,48 +400,51 @@ src/pages/profile/index.tsx
 
 ## `rgen-cli make route <route-name>`
 
-Adds a route in `src/routes`.
-
-```sh
-rgen-cli make route dashboard
-```
-
-### 🏷️ Flags
-
-| Flag | Description                                       |
-| ---- | ------------------------------------------------- |
-| `-p` | **Optional**. Creates a page along with the route |
+Adds a new route to `src/routes`, with optional page generation and AI-powered scaffolding.
 
 ### 🛠️ What It Does
 
-- Initializes routing system + 404 page (if not exists)
-- Creates `routes/<RouteName>/index.tsx`
-- Adds `<Route>` for the path
-- Optionally generates page if `-p` flag is used
+- Initializes the routing system (including a default 404 page) if not already set up
+- Creates `routes/<RouteName>/index.tsx` or `.jsx`
+- Adds a `<Route>` for the specified path
+- Optionally generates a page component in `src/pages/<route-name>` if `-p` is used
+- Optionally uses Gemini AI to scaffold page content based on your description
 
-### ✅ Example
+### 🏷️ Flags
 
-```sh
+| Flag     | Description                                                                      |
+| -------- | -------------------------------------------------------------------------------- |
+| `-p`     | _Optional._ Creates a page alongside the route                                   |
+| `--desc` | _Optional._ Describe what the AI should generate inside the page (requires `-p`) |
+
+### ✅ Examples
+
+```bash
+# Basic route
+rgen-cli make route dashboard
+
+# Route with page
 rgen-cli make route dashboard -p
+
+# Route with AI-generated page content
+rgen-cli make route dashboard -p --desc "dashboard with user stats and recent activity"
 ```
 
-Generates:
+This will generate:
 
 ```
-src/routes/Dashboard/index.tsx
+src/routes/dashboard/index.tsx
 src/pages/dashboard/index.tsx
 ```
 
-### ! Important
+### ⚠️ Important
 
 Make sure your app uses the generated router:
 
 ```tsx
-import AppRoutes from '@/routes' // 👈 add this
+import AppRoutes from '@/routes'
 
-createRoot(document.getElementById('root')!).render(
-  <AppRoutes />, // 👈 add this
-)
+createRoot(document.getElementById('root')!).render(<AppRoutes />)
 ```
 
 [Back to top](#table-of-contents)
@@ -389,7 +478,7 @@ src/store/state/auth/Auth.ts
 src/store/state/hooks.ts
 ```
 
-### ! Important
+### ⚠️ Important
 
 Make sure your app uses the generated store:
 

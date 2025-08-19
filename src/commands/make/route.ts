@@ -9,6 +9,7 @@ export default class MakeRoute extends Command {
 
   static override flags = {
     page: Flags.boolean({char: 'p', description: 'Also generate a page for this route'}),
+    desc: Flags.string({description: 'AI description for React page.'}),
   }
 
   public async run(): Promise<void> {

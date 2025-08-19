@@ -3,10 +3,11 @@ import {Command} from '@oclif/core'
 import path from 'node:path'
 import fs from 'node:fs'
 import chalk from 'chalk'
+import {generateComponent} from './ai/gemini.js'
 
 export default class Component extends Build {
-  constructor(cmd: Command, name: string) {
-    super(cmd, name, 'components')
+  constructor(cmd: Command, name: string, flags: unknown = {}) {
+    super(cmd, name, 'components', flags)
   }
 
   async setup() {
@@ -24,7 +25,18 @@ export function ${this.uname}({ className, ...props }${this.typescript ? ' : Pro
     <div className={cn(className)} {...props}/>
 }`
 
-      fs.writeFileSync(componentPath, componentTemplate)
+      if (this.flags.desc) {
+        const t = await generateComponent(
+          componentTemplate,
+          this.type,
+          this.flags.desc,
+          this.geminiApiKey,
+          this.typescript,
+        )
+        fs.writeFileSync(componentPath, t)
+      } else {
+        fs.writeFileSync(componentPath, componentTemplate)
+      }
 
       this.cmd.log(`${chalk.blue('[+]')} Creating new component ${this.uname} - ${chalk.blue(componentPath)}`)
     } catch (err: unknown) {
