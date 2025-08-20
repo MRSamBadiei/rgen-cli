@@ -15,6 +15,11 @@ export default class Layout extends Build {
       await this.init()
 
       const layoutPath = path.join(this.baseDir, `${this.uname}Layout.${this.typescript ? 'tsx' : 'jsx'}`)
+
+      if (fs.existsSync(layoutPath)) {
+        this.cmd.error(`${chalk.blue('[X]')} Already exists! - ${chalk.blue(layoutPath)}`)
+      }
+
       const layouttemplate = `import { cn } from '@/libs/utils'
 
 
@@ -29,6 +34,7 @@ export function ${this.uname}Layout() {
           this.flags.desc,
           this.geminiApiKey,
           this.typescript,
+          this.defaults.model,
         )
         fs.writeFileSync(layoutPath, t)
       } else {

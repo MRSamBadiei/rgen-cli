@@ -21,7 +21,7 @@ export default class Build {
     base: 'src/',
     debug: false,
     useAI: false,
-    model: 'Gemini',
+    model: 'gemini-2.5-flash',
   }
   public geminiApiKey: string = ''
 

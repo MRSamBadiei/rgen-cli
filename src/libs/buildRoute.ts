@@ -66,6 +66,10 @@ export default [
       }} />
 ]`
 
+      if (fs.existsSync(routePath)) {
+        this.cmd.error(`${chalk.blue('[X]')} Already exists! - ${chalk.blue(routePath)}`)
+      }
+
       fs.writeFileSync(routePath, route)
 
       this.cmd.log(`${chalk.blue('[+]')} Creating new route ${this.uname} - ${chalk.blue(routePath)}`)

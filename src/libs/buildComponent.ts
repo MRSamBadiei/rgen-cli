@@ -15,6 +15,11 @@ export default class Component extends Build {
       await this.init()
 
       const componentPath = path.join(this.baseDir, `${this.uname}.${this.typescript ? 'tsx' : 'jsx'}`)
+
+      if (fs.existsSync(componentPath)) {
+        this.cmd.error(`${chalk.blue('[X]')} Already exists! - ${chalk.blue(componentPath)}`)
+      }
+
       const componentTemplate = `import { cn } from '@/libs/utils'
 ${
   this.typescript
@@ -32,6 +37,7 @@ export function ${this.uname}({ className, ...props }${this.typescript ? ' : Pro
           this.flags.desc,
           this.geminiApiKey,
           this.typescript,
+          this.defaults.model,
         )
         fs.writeFileSync(componentPath, t)
       } else {

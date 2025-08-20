@@ -7,7 +7,7 @@ export function defaults() {
     base: 'src/',
     debug: false,
     useAI: false,
-    model: 'Gemini',
+    model: 'gemini-2.5-flash',
   }
 
   const reactUtilsPath = path.resolve(process.cwd(), 'rgen-cli.json')

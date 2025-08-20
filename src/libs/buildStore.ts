@@ -118,6 +118,10 @@ import { setValue } from '@/state/${this.uname}'
 
 */`
 
+      if (fs.existsSync(storePath)) {
+        this.cmd.error(`${chalk.blue('[X]')} Already exists! - ${chalk.blue(storePath)}`)
+      }
+
       fs.writeFileSync(storePath, storeTemplate)
 
       this.cmd.log(`${chalk.blue('[+]')} Creating new store ${this.uname} - ${chalk.blue(storePath)}`)

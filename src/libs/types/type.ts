@@ -1,4 +1,4 @@
-export type AIModels = 'Gemini'
+export type AIModels = 'gemini-2.5-flash'
 
 export interface RGenDefaults {
   base: string

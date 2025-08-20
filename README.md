@@ -12,23 +12,25 @@ Whether you're starting fresh or scaling fast, `rgen-cli` keeps your codebase cl
 [![Version](https://img.shields.io/npm/v/rgen-cli.svg)](https://npmjs.org/package/rgen-cli)
 [![Downloads/week](https://img.shields.io/npm/dw/rgen-cli.svg)](https://npmjs.org/package/rgen-cli)
 
+[![asciicast](https://asciinema.org/a/adkrjjlfe1Jt2aISL7NERUZiO.svg)](https://asciinema.org/a/adkrjjlfe1Jt2aISL7NERUZiO)
+
 ---
 
 ## Table of Contents
 
 - [Installation](#installation)
-- [Getting Started](#getting-started)
+- [Getting Started](#-getting-started)
 
-  - [Initialize Your Project](#🧭-initialize-your-project)
-  - [Add Path Aliases](#1.-add-path-aliases)
-  - [Finish Tailwind Setup](#2.-last-step---finish-tailwind-setup)
-  - [Setup Gemini AI Integration](#3.-setup-gemini-ai-integration)
+  - [Initialize Your Project](#-initialize-your-project)
+  - [Add Path Aliases](#1-add-path-aliases)
+  - [Finish Tailwind Setup](#2-finish-tailwind-setup)
+  - [Setup Gemini AI Integration](#3-setup-gemini-ai-integration)
 
 - [Rules](#rules)
 
-  - [Basic Name](#✅-basic-name)
-  - [Dot Notation](#🟠-dot-notation)
-  - [Dash Notation](#🟠-dash-notation)
+  - [Basic Name](#-basic-name)
+  - [Dot Notation](#-dot-notation)
+  - [Dash Notation](#-dash---notation)
 
 - [Commands](#commands)
 
@@ -42,7 +44,7 @@ Whether you're starting fresh or scaling fast, `rgen-cli` keeps your codebase cl
     - [`rgen-cli make page`](#rgen-cli-make-page-page-name)
     - [`rgen-cli make route`](#rgen-cli-make-route-route-name)
     - [`rgen-cli make store`](#rgen-cli-make-store-store-name)
-    - [`rgen-cli make form`](#rgen-cli-make-form-form-name-p-page-name)
+    - [`rgen-cli make form`](#rgen-cli-make-form-form-name--p-page-name)
 
 ---
 
@@ -133,7 +135,10 @@ Open your `rgen-cli.json` file and set the `useAI` flag to `true`:
 
 ```json
 {
-  "useAI": true
+  "base": "src/",
+  "debug": false,
+  "useAI": true, // 👈 Set to true
+  "model": "gemini-2.5-flash"
 }
 ```
 
@@ -400,7 +405,7 @@ src/pages/dashboard/index.tsx
 
 ## `rgen-cli make route <route-name>`
 
-Adds a new route to `src/routes`, with optional page generation and AI-powered scaffolding.
+Adds a new route to `src/routes`, with optional page generation and Gemini AI-powered scaffolding.
 
 ### 🛠️ What It Does
 
@@ -416,6 +421,25 @@ Adds a new route to `src/routes`, with optional page generation and AI-powered s
 | -------- | -------------------------------------------------------------------------------- |
 | `-p`     | _Optional._ Creates a page alongside the route                                   |
 | `--desc` | _Optional._ Describe what the AI should generate inside the page (requires `-p`) |
+
+### 📦 Auto-Installed Packages
+
+If you're using routing for the first time, `rgen-cli` will automatically install:
+
+- [`react-router`](https://reactrouter.com/)
+
+### 📁 Route Structure
+
+When routing is initialized:
+
+```
+src/routes/
+├── index.tsx            # Main router file (auto-managed)
+├── root/index.tsx       # Default route for "/"
+├── dashboard/index.tsx  # Example route for "/dashboard"
+```
+
+You don’t need to manually edit `routes/index.tsx` — it dynamically loads all route modules using `import.meta.glob`.
 
 ### ✅ Examples
 
@@ -467,8 +491,8 @@ rgen-cli make store auth
 
 ### 📦 Auto-Installed Packages
 
-- `react-redux`
-- `@reduxjs/toolkit`
+- [`react-redux`](https://react-redux.js.org/)
+- [`@reduxjs/toolkit`](https://redux-toolkit.js.org/)
 
 ### ✅ Example
 

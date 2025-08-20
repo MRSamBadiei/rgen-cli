@@ -71,6 +71,10 @@ export * from './types'`
       const typePath = path.join(this.baseDir, 'types.ts')
       const indexPath = path.join(this.baseDir, `index.${this.typescript ? 'ts' : 'js'}`)
 
+      if (fs.existsSync(usePath)) {
+        this.cmd.error(`${chalk.blue('[X]')} Already exists! - ${chalk.blue(usePath)}`)
+      }
+
       fs.writeFileSync(contextPath, contextTemplate)
       fs.writeFileSync(providerPath, providerTemplate)
       fs.writeFileSync(usePath, useTemplate)

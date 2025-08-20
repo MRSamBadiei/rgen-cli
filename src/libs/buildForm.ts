@@ -24,9 +24,6 @@ export const ${this.name}Schema = z.object({
   
 ${this.typescript ? `export type ${this.uname}FormData = z.infer<typeof ${this.name}Schema>` : ''}`
 
-      fs.writeFileSync(schemaPath, schemaTemplate)
-      this.cmd.log(`${chalk.blue('[+]')} Creating new ${this.name}Schema - ${chalk.blue(schemaPath)}`)
-
       // src/pages/auth/forms/useXForm.ts or js
       const useFormPath = path.join(this.rootDir, this.name, `use${this.uname}Form.${this.typescript ? 'ts' : 'js'}`)
       const useFormTemplate = `import { useForm } from "react-hook-form"
@@ -42,9 +39,6 @@ export function use${this.uname}Form() {
     },
   })
 }`
-
-      fs.writeFileSync(useFormPath, useFormTemplate)
-      this.cmd.log(`${chalk.blue('[+]')} Creating new use${this.uname}Form - ${chalk.blue(useFormPath)}`)
 
       //  src/pages/auth/forms/XForm.tsx or jsx
       const formPath = path.join(this.rootDir, this.name, `${this.uname}Form.${this.typescript ? 'tsx' : 'jsx'}`)
@@ -103,8 +97,16 @@ export default function ${this.uname}Form() {
     </form>
   )
 }`
-      fs.writeFileSync(formPath, formTemplate)
 
+      if (fs.existsSync(formPath)) {
+        this.cmd.error(`${chalk.blue('[X]')} Already exists! - ${chalk.blue(formPath)}`)
+      }
+
+      fs.writeFileSync(schemaPath, schemaTemplate)
+      this.cmd.log(`${chalk.blue('[+]')} Creating new ${this.name}Schema - ${chalk.blue(schemaPath)}`)
+      fs.writeFileSync(useFormPath, useFormTemplate)
+      this.cmd.log(`${chalk.blue('[+]')} Creating new use${this.uname}Form - ${chalk.blue(useFormPath)}`)
+      fs.writeFileSync(formPath, formTemplate)
       this.cmd.log(`${chalk.blue('[+]')} Creating new ${this.uname}Form - ${chalk.blue(formPath)}`)
     } catch (err: unknown) {
       if (err instanceof Error) {

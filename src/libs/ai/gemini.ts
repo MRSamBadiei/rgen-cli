@@ -1,6 +1,6 @@
 import {GoogleGenAI} from '@google/genai'
 import chalk from 'chalk'
-import {BuildType} from '../types/type.js'
+import {AIModels, BuildType} from '../types/type.js'
 
 export async function generateComponent(
   template: string,
@@ -8,6 +8,7 @@ export async function generateComponent(
   desc: string,
   apiKey: string,
   typescript: boolean,
+  model: AIModels = 'gemini-2.5-flash',
 ): Promise<string> {
   const systemInstructionTSX = `You are an expert React developer.
 Only generate complete React ${type} in TypeScript (TSX).
@@ -43,7 +44,7 @@ Only generate complete React ${type} in plain JSX.
 
   const ai = new GoogleGenAI({apiKey})
 
-  const prompt = `
+  const contents = `
 Here is my default React component template:
 
 ${template}
@@ -56,8 +57,8 @@ ${typescript ? descTSX : descJSX}
   try {
     console.log(chalk.green(`Generating ${type} with AI...`))
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: prompt,
+      model,
+      contents,
       config: {
         systemInstruction: typescript ? systemInstructionTSX : systemInstructionJSX,
       },

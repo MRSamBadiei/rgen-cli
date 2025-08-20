@@ -15,6 +15,11 @@ export default class Hook extends Build {
       await this.init()
 
       const hookPath = path.join(this.baseDir, `use${this.uname}.${this.typescript ? 'ts' : 'js'}`)
+
+      if (fs.existsSync(hookPath)) {
+        this.cmd.error(`${chalk.blue('[X]')} Already exists! - ${chalk.blue(hookPath)}`)
+      }
+
       const hookTemplate = `import { useState, useEffect } from 'react'
 
 export function use${this.uname}${this.typescript ? '<T>' : ''}() {
@@ -28,7 +33,14 @@ export function use${this.uname}${this.typescript ? '<T>' : ''}() {
 }`
 
       if (this.flags.desc) {
-        const t = await generateComponent(hookTemplate, this.type, this.flags.desc, this.geminiApiKey, this.typescript)
+        const t = await generateComponent(
+          hookTemplate,
+          this.type,
+          this.flags.desc,
+          this.geminiApiKey,
+          this.typescript,
+          this.defaults.model,
+        )
         fs.writeFileSync(hookPath, t)
       } else {
         fs.writeFileSync(hookPath, hookTemplate)

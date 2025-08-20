@@ -67,6 +67,10 @@ export default function ${this.uname}Page() {
 
       const pagePath = path.join(this.baseDir, `index.${this.typescript ? 'tsx' : 'jsx'}`)
 
+      if (fs.existsSync(pagePath)) {
+        this.cmd.error(`${chalk.blue('[X]')} Already exists! - ${chalk.blue(pagePath)}`)
+      }
+
       if (this.flags.desc) {
         const t = await generateComponent(
           this.template(this.templateType),
@@ -74,6 +78,7 @@ export default function ${this.uname}Page() {
           this.flags.desc,
           this.geminiApiKey,
           this.typescript,
+          this.defaults.model,
         )
         fs.writeFileSync(pagePath, t)
       } else {

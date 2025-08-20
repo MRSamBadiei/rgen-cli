@@ -73,7 +73,7 @@ export function cn(...inputs: ClassValue[]) {
           debug: false,
           /* AI stuff */
           useAI: false,
-          model: 'Gemini',
+          model: 'gemini-2.5-flash',
           /* */
         } satisfies RGenDefaults,
         null,
