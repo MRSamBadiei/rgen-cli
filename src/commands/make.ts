@@ -1,11 +1,12 @@
 import {Command} from '@oclif/core'
-import inquirer from 'inquirer'
 import chalk from 'chalk'
+import inquirer from 'inquirer'
 import {execSync} from 'node:child_process'
-import path from 'node:path'
 import fs from 'node:fs'
-import {checkUpdate} from '../libs/update.js'
+import path from 'node:path'
+
 import {defaults} from '../libs/defaults.js'
+import {checkUpdate} from '../libs/update.js'
 
 export default class Make extends Command {
   public async run(): Promise<void> {
@@ -14,7 +15,7 @@ export default class Make extends Command {
     const _defaults = defaults()
 
     // AI available only [component hook layout page]
-    const aiAvailable = ['component', 'hook', 'layout', 'page']
+    const aiAvailable = new Set(['component', 'hook', 'layout', 'page'])
     const makes = ['component', 'context', 'hook', 'layout', 'page', 'route', 'form', 'store']
 
     const flags: string[] = []
@@ -22,19 +23,19 @@ export default class Make extends Command {
     // Step 1: Ask user which type to create
     const {type} = await inquirer.prompt([
       {
-        type: 'list',
-        name: 'type',
-        message: 'Select what you want to create:',
         choices: makes,
+        message: 'Select what you want to create:',
+        name: 'type',
+        type: 'list',
       },
     ])
 
     // Step 2: Ask for the name
     const {name} = await inquirer.prompt([
       {
-        type: 'input',
-        name: 'name',
         message: `Enter the name for the ${type}:`,
+        name: 'name',
+        type: 'input',
         validate: (input: string) => input.length > 0 || 'Name cannot be empty',
       },
     ])
@@ -43,7 +44,7 @@ export default class Make extends Command {
 
     // * form
     if (type === 'form') {
-      const pagesPath = path.join(process.cwd(), 'src', 'pages')
+      const pagesPath = path.join(process.cwd(), _defaults.base, 'pages')
       if (!fs.existsSync(pagesPath)) {
         this.error(chalk.red(`[✖] No "pages" folder found at ${pagesPath}\nCreate a page first`))
       }
@@ -56,10 +57,10 @@ export default class Make extends Command {
 
       const {selectedPage} = await inquirer.prompt([
         {
-          type: 'list',
-          name: 'selectedPage',
-          message: 'Select the page folder for this form:',
           choices: pages,
+          message: 'Select the page folder for this form:',
+          name: 'selectedPage',
+          type: 'list',
         },
       ])
 
@@ -72,10 +73,10 @@ export default class Make extends Command {
     if (type === 'route') {
       const {createPage} = await inquirer.prompt([
         {
-          type: 'confirm',
-          name: 'createPage',
-          message: 'Do you also want to create a page for this route?',
           default: false,
+          message: 'Do you also want to create a page for this route?',
+          name: 'createPage',
+          type: 'confirm',
         },
       ])
 
@@ -85,13 +86,13 @@ export default class Make extends Command {
     }
 
     // * AI
-    if ((aiAvailable.includes(type) || (type === 'route' && flags.includes('-p'))) && _defaults.useAI) {
+    if ((aiAvailable.has(type) || (type === 'route' && flags.includes('-p'))) && _defaults.useAI) {
       const {desc} = await inquirer.prompt([
         {
-          type: 'input',
-          name: 'desc',
-          message: 'Describe what you want the AI to generate (leave empty to skip):',
           default: '',
+          message: 'Describe what you want the AI to generate (leave empty to skip):',
+          name: 'desc',
+          type: 'input',
         },
       ])
 
@@ -103,7 +104,7 @@ export default class Make extends Command {
     try {
       let cmd = `rgen-cli make ${type} ${name}`
 
-      if (aiAvailable.includes(type) && flags.includes('--desc')) {
+      if (aiAvailable.has(type) && flags.includes('--desc')) {
         cmd += ` ${flags.join(' ')}`
       }
 
@@ -114,8 +115,8 @@ export default class Make extends Command {
       this.log(chalk.green(`[>] ${cmd}`))
 
       execSync(cmd, {stdio: 'inherit'})
-    } catch (err: any) {
-      this.error(`[x] ${err.message}`)
+    } catch (error: unknown) {
+      this.error(`[x] ${(error as Error).message}`)
     }
   }
 }

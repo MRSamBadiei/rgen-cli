@@ -1,5 +1,6 @@
 import {GoogleGenAI} from '@google/genai'
 import chalk from 'chalk'
+
 import {AIModels, BuildType} from '../types/type.js'
 
 export async function generateComponent(
@@ -14,9 +15,9 @@ export async function generateComponent(
 Only generate complete React ${type} in TypeScript (TSX).
 - Always include proper type annotations and interfaces.
 - Follow the template structure provided.${
-    type !== 'hooks'
-      ? `\n- Use Tailwind CSS classes for styling.\n- Always use cn() to merge class names, and include "import { cn } from '@/libs/utils'".`
-      : ''
+    type === 'hooks'
+      ? ''
+      : `\n- Use Tailwind CSS classes for styling.\n- Always use cn() to merge class names, and include "import { cn } from '@/libs/utils'".`
   }
 - Do not include markdown, explanations, or comments outside of JSX/TSX.
 - Output should be ready-to-use code.`
@@ -25,9 +26,9 @@ Only generate complete React ${type} in TypeScript (TSX).
 Only generate complete React ${type} in plain JSX.
 - Do not include TypeScript types, interfaces, or type annotations.
 - Follow the template structure provided.${
-    type !== 'hooks'
-      ? `\n- Use Tailwind CSS classes for styling.\n- Always use cn() to merge class names, and include "import { cn } from '@/libs/utils'".`
-      : ''
+    type === 'hooks'
+      ? ''
+      : `\n- Use Tailwind CSS classes for styling.\n- Always use cn() to merge class names, and include "import { cn } from '@/libs/utils'".`
   }
 - Do not include markdown, explanations, or comments outside of JSX.
 - Output should be ready-to-use code.`
@@ -57,11 +58,11 @@ ${typescript ? descTSX : descJSX}
   try {
     console.log(chalk.green(`Generating ${type} with AI...`))
     const response = await ai.models.generateContent({
-      model,
-      contents,
       config: {
         systemInstruction: typescript ? systemInstructionTSX : systemInstructionJSX,
       },
+      contents,
+      model,
     })
 
     let result = response?.text?.trim() ?? ''

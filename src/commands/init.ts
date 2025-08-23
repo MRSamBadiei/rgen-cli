@@ -1,11 +1,12 @@
 import {Command} from '@oclif/core'
-import path from 'node:path'
-import fs from 'node:fs'
 import chalk from 'chalk'
-import {execSync} from 'node:child_process'
 import {parse} from 'jsonc-parser'
-import {checkUpdate} from '../libs/update.js'
+import {execSync} from 'node:child_process'
+import fs from 'node:fs'
+import path from 'node:path'
+
 import {RGenDefaults} from '../libs/types/type.js'
+import {checkUpdate} from '../libs/update.js'
 
 export default class Init extends Command {
   public async run(): Promise<void> {
@@ -17,7 +18,7 @@ export default class Init extends Command {
     try {
       execSync('npm install @types/node', {stdio: 'inherit'})
       this.log(`${chalk.green('[+] Installed @types/node successfully.')} `)
-    } catch (err) {
+    } catch {
       this.error('Failed to install @types/node.')
     }
 
@@ -27,7 +28,7 @@ export default class Init extends Command {
     try {
       execSync('npm install tailwindcss @tailwindcss/vite', {stdio: 'inherit'})
       this.log(`${chalk.green('[+] Installed tailwindcss @tailwindcss/vite successfully.')} `)
-    } catch (err) {
+    } catch {
       this.error('Failed to install tailwindcss @tailwindcss/vite.')
     }
 
@@ -37,7 +38,7 @@ export default class Init extends Command {
     try {
       execSync('npm install clsx', {stdio: 'inherit'})
       this.log(`${chalk.green('[+] Installed clsx successfully.')} `)
-    } catch (err) {
+    } catch {
       this.error('Failed to install clsx.')
     }
 
@@ -47,7 +48,7 @@ export default class Init extends Command {
     try {
       execSync('npm install tailwind-merge', {stdio: 'inherit'})
       this.log(`${chalk.green('[+] Installed tailwind-merge successfully.')} `)
-    } catch (err) {
+    } catch {
       this.error('Failed to install tailwind-merge.')
     }
 
@@ -71,15 +72,15 @@ export function cn(...inputs: ClassValue[]) {
         {
           base: 'src/',
           debug: false,
+          model: 'gemini-2.5-flash',
           /* AI stuff */
           useAI: false,
-          model: 'gemini-2.5-flash',
           /* */
         } satisfies RGenDefaults,
         null,
         2,
       ),
-      'utf-8',
+      'utf8',
     )
     this.log(`${chalk.blue('[+]')} Creating new config rgen-cli.json - ${chalk.blue(reactUtilsPath)}`)
 
@@ -87,7 +88,7 @@ export function cn(...inputs: ClassValue[]) {
 
     const tsconfigAppJsonPath = path.join(process.cwd(), 'tsconfig.app.json')
     if (fs.existsSync(tsconfigAppJsonPath)) {
-      const content = fs.readFileSync(tsconfigAppJsonPath, 'utf-8')
+      const content = fs.readFileSync(tsconfigAppJsonPath, 'utf8')
       const tsconfigAppJson = parse(content) // parses JSON with comments
 
       tsconfigAppJson.compilerOptions = tsconfigAppJson.compilerOptions || {}
@@ -103,9 +104,9 @@ export function cn(...inputs: ClassValue[]) {
           tsconfigAppJsonPath,
         )}`,
       )
-    } /*else {
+    } /* else {
       this.error(`${chalk.red('[ERROR]')} tsconfig.app.json not found at ${chalk.cyan(tsconfigAppJsonPath)}`)
-    }*/
+    } */
 
     this.log(
       `\n\n${chalk.green('[INFO]')}` +

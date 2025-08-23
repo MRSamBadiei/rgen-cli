@@ -1,12 +1,14 @@
-import path from 'node:path'
-import fs from 'node:fs'
-import Build from './build.js'
 import {Command} from '@oclif/core'
 import chalk from 'chalk'
-import {generateComponent} from './ai/gemini.js'
+import fs from 'node:fs'
+import path from 'node:path'
 
-export default class Layout extends Build {
-  constructor(cmd: Command, name: string, flags: unknown = {}) {
+import {generateComponent} from './ai/gemini.js'
+import Build from './build.js'
+import {LayoutFlag} from './types/type.js'
+
+export default class Layout<T extends LayoutFlag> extends Build<T> {
+  constructor(cmd: Command, name: string, flags: T) {
     super(cmd, name, 'layouts', flags)
   }
 
@@ -20,14 +22,22 @@ export default class Layout extends Build {
         this.cmd.error(`${chalk.blue('[X]')} Already exists! - ${chalk.blue(layoutPath)}`)
       }
 
-      const layouttemplate = `import { cn } from '@/libs/utils'
-
-
-export function ${this.uname}Layout() {
-  <div className={cn(className)}>My ${this.uname} layout</div>
+      const layouttemplate = `import { cn } from '@/libs/utils'${
+        this.typescript
+          ? `\nimport type { ReactNode } from 'react'\n\ninterface ${this.uname}LayoutProps {
+  children: ReactNode
+  className?: string
 }`
+          : ''
+      }
 
-      if (this.flags.desc) {
+export function ${this.uname}Layout({ children, className }${this.typescript ? `: ${this.uname}LayoutProps` : ''})${
+        this.typescript ? ': React.JSX.Element' : ''
+      } {
+  return <div className={cn('p-6 bg-white rounded-xl shadow-lg', className)}>{children}</div>
+}\n`
+
+      if (this.flags?.desc) {
         const t = await generateComponent(
           layouttemplate,
           this.type,
@@ -42,9 +52,9 @@ export function ${this.uname}Layout() {
       }
 
       this.cmd.log(`${chalk.blue('[+]')} Creating new ${this.uname}Layout - ${chalk.blue(layoutPath)}`)
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        this.cmd.error(err)
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        this.cmd.error(error)
       }
     }
   }

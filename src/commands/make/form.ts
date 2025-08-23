@@ -1,5 +1,7 @@
 import {Args, Command, Flags} from '@oclif/core'
-import Form from '../../libs/buildForm.js'
+
+import Form from '../../libs/build-form.js'
+import {FormFlag} from '../../libs/types/type.js'
 
 export default class MakeForm extends Command {
   static override args = {
@@ -12,7 +14,7 @@ export default class MakeForm extends Command {
 
   public async run(): Promise<void> {
     const {args, flags} = await this.parse(MakeForm)
-    const form = new Form(this, args.name, flags)
+    const form = new Form(this, args.name, flags as unknown as FormFlag)
     await form.setup()
   }
 }

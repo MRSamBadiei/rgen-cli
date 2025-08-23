@@ -1,5 +1,6 @@
 import {Args, Command} from '@oclif/core'
-import Context from '../../libs/buildContext.js'
+
+import Context from '../../libs/build-context.js'
 
 export default class MakeContext extends Command {
   static override args = {

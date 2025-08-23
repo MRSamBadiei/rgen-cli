@@ -1,11 +1,13 @@
-import path from 'node:path'
-import fs from 'node:fs'
-import Build from './build.js'
 import {Command} from '@oclif/core'
 import chalk from 'chalk'
+import fs from 'node:fs'
+import path from 'node:path'
 
-export default class Form extends Build {
-  constructor(cmd: Command, name: string, flags: unknown = {}) {
+import Build from './build.js'
+import {FormFlag} from './types/type.js'
+
+export default class Form<T extends FormFlag> extends Build<T> {
+  constructor(cmd: Command, name: string, flags: T) {
     super(cmd, name, 'forms', flags)
   }
 
@@ -19,70 +21,75 @@ export default class Form extends Build {
 
 export const ${this.name}Schema = z.object({
   email: z.email('Invalid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
-})
-  
-${this.typescript ? `export type ${this.uname}FormData = z.infer<typeof ${this.name}Schema>` : ''}`
+  password: z.string().min(6, 'Password must be at least 6 characters')
+})${this.typescript ? `\n\nexport type ${this.uname}FormData = z.infer<typeof ${this.name}Schema>\n` : ''}`
 
       // src/pages/auth/forms/useXForm.ts or js
       const useFormPath = path.join(this.rootDir, this.name, `use${this.uname}Form.${this.typescript ? 'ts' : 'js'}`)
-      const useFormTemplate = `import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { ${this.name}Schema${this.typescript ? `, type ${this.uname}FormData` : ''} } from "./${this.name}.schema"
+      const useFormTemplate = `import { useForm${this.typescript ? ', UseFormReturn' : ''} } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { ${this.name}Schema${this.typescript ? `, type ${this.uname}FormData` : ''} } from './${this.name}.schema'
 
-export function use${this.uname}Form() {
+export function use${this.uname}Form()${this.typescript ? `: UseFormReturn<${this.uname}FormData>` : ''} {
   return useForm${this.typescript ? `<${this.uname}FormData>` : ''}({
     resolver: zodResolver(${this.name}Schema),
     defaultValues: {
-      email: "",
-      password: "",
-    },
+      email: '',
+      password: ''
+    }
   })
-}`
+}\n`
 
       //  src/pages/auth/forms/XForm.tsx or jsx
       const formPath = path.join(this.rootDir, this.name, `${this.uname}Form.${this.typescript ? 'tsx' : 'jsx'}`)
-      const formTemplate = `import { cn } from "@/libs/utils"
-import { use${this.uname}Form } from "./use${this.uname}Form"
+      const formTemplate = `import { cn } from '@/libs/utils'
+import { use${this.uname}Form } from './use${this.uname}Form'
 
-export default function ${this.uname}Form() {
+export default function ${this.uname}Form()${this.typescript ? ': React.JSX.Element' : ''} {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors }
   } = use${this.uname}Form()
 
-  const onSubmit = (data${this.typescript ? ': any' : ''}) => {
-    console.log("Form submitted:", data)
+  const onSubmit = (data${this.typescript ? ': unknown' : ''})${this.typescript ? ': void' : ''} => {
+    console.log('Form submitted:', data)
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className={cn("space-y-6 p-6 bg-white rounded-xl shadow-lg")}>
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className={cn('space-y-6 p-6 bg-white rounded-xl shadow-lg')}
+    >
       <div className="flex flex-col">
-        <label htmlFor="email" className="mb-1 font-medium text-gray-700">Email</label>
+        <label htmlFor="email" className="mb-1 font-medium text-gray-700">
+          Email
+        </label>
         <input
           id="email"
-          {...register("email")}
+          {...register('email')}
           type="email"
           placeholder="Enter your email"
           className={cn(
-            "border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500",
-            errors.email && "border-red-500"
+            'border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500',
+            errors.email && 'border-red-500'
           )}
         />
         {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
       </div>
 
       <div className="flex flex-col">
-        <label htmlFor="password" className="mb-1 font-medium text-gray-700">Password</label>
+        <label htmlFor="password" className="mb-1 font-medium text-gray-700">
+          Password
+        </label>
         <input
           id="password"
-          {...register("password")}
+          {...register('password')}
           type="password"
           placeholder="Enter your password"
           className={cn(
-            "border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500",
-            errors.password && "border-red-500"
+            'border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500',
+            errors.password && 'border-red-500'
           )}
         />
         {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
@@ -96,7 +103,7 @@ export default function ${this.uname}Form() {
       </button>
     </form>
   )
-}`
+}\n`
 
       if (fs.existsSync(formPath)) {
         this.cmd.error(`${chalk.blue('[X]')} Already exists! - ${chalk.blue(formPath)}`)
@@ -108,9 +115,9 @@ export default function ${this.uname}Form() {
       this.cmd.log(`${chalk.blue('[+]')} Creating new use${this.uname}Form - ${chalk.blue(useFormPath)}`)
       fs.writeFileSync(formPath, formTemplate)
       this.cmd.log(`${chalk.blue('[+]')} Creating new ${this.uname}Form - ${chalk.blue(formPath)}`)
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        this.cmd.error(err)
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        this.cmd.error(error)
       }
     }
   }

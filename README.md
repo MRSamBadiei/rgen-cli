@@ -85,13 +85,13 @@ Add the following to your `vite.config.js` or `vite.config.ts`:
 import {defineConfig} from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
-import path from 'node:path' // 👈 Add this
+import {resolve} from 'path' // 👈 Add this
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src'), // 👈 Add this
+      '@': resolve('src/'), // 👈 Add this
     },
   },
 })

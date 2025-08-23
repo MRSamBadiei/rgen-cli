@@ -1,5 +1,6 @@
 import {Args, Command} from '@oclif/core'
-import Store from '../../libs/buildStore.js'
+
+import Store from '../../libs/build-store.js'
 
 export default class MakeStore extends Command {
   static override args = {

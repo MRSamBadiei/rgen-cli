@@ -1,12 +1,14 @@
-import path from 'node:path'
-import fs from 'node:fs'
-import Build from './build.js'
 import {Command} from '@oclif/core'
 import chalk from 'chalk'
-import {generateComponent} from './ai/gemini.js'
+import fs from 'node:fs'
+import path from 'node:path'
 
-export default class Hook extends Build {
-  constructor(cmd: Command, name: string, flags: unknown = {}) {
+import {generateComponent} from './ai/gemini.js'
+import Build from './build.js'
+import {HookFlag} from './types/type.js'
+
+export default class Hook<T extends HookFlag> extends Build<T> {
+  constructor(cmd: Command, name: string, flags: T) {
     super(cmd, name, 'hooks', flags)
   }
 
@@ -20,9 +22,20 @@ export default class Hook extends Build {
         this.cmd.error(`${chalk.blue('[X]')} Already exists! - ${chalk.blue(hookPath)}`)
       }
 
-      const hookTemplate = `import { useState, useEffect } from 'react'
+      const hookTemplate = `import { useState, useEffect${
+        this.typescript ? ', Dispatch, SetStateAction' : ''
+      } } from 'react'${
+        this.typescript
+          ? `\n\nexport type Use${this.uname}Return<T> = {
+  state: T | null
+  setState: Dispatch<SetStateAction<T | null>>
+}`
+          : ''
+      }
 
-export function use${this.uname}${this.typescript ? '<T>' : ''}() {
+export function use${this.uname}${this.typescript ? '<T>' : ''}()${
+        this.typescript ? `: Use${this.uname}Return<T>` : ''
+      } {
   const [state, setState] = useState${this.typescript ? '<T | null>' : ''}(null)
 
   useEffect(() => {
@@ -30,9 +43,9 @@ export function use${this.uname}${this.typescript ? '<T>' : ''}() {
   }, [])
 
   return { state, setState }
-}`
+}\n`
 
-      if (this.flags.desc) {
+      if (this.flags?.desc) {
         const t = await generateComponent(
           hookTemplate,
           this.type,
@@ -47,9 +60,9 @@ export function use${this.uname}${this.typescript ? '<T>' : ''}() {
       }
 
       this.cmd.log(`${chalk.blue('[+]')} Creating new hook use${this.uname} - ${chalk.blue(hookPath)}`)
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        this.cmd.error(err)
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        this.cmd.error(error)
       }
     }
   }

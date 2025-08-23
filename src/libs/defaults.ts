@@ -1,36 +1,40 @@
-import path from 'node:path'
 import fs from 'node:fs'
+import path from 'node:path'
+
 import {RGenDefaults} from './types/type.js'
 
 export function defaults() {
   const defaults: RGenDefaults = {
     base: 'src/',
     debug: false,
-    useAI: false,
     model: 'gemini-2.5-flash',
+    useAI: false,
   }
 
   const reactUtilsPath = path.resolve(process.cwd(), 'rgen-cli.json')
   if (fs.existsSync(reactUtilsPath)) {
-    const reactUtilsDefaults = JSON.parse(fs.readFileSync(reactUtilsPath, 'utf-8'))
+    const reactUtilsDefaults = JSON.parse(fs.readFileSync(reactUtilsPath, 'utf8'))
     /*
      * Overriding Default debug
      */
     if (reactUtilsDefaults.debug) {
       defaults.debug = reactUtilsDefaults.debug
     }
+
     /*
      * Overriding Default base
      */
     if (reactUtilsDefaults.base) {
       defaults.base = reactUtilsDefaults.base
     }
+
     /*
      * Overriding Default useAI
      */
     if (reactUtilsDefaults.useAI) {
       defaults.useAI = reactUtilsDefaults.useAI
     }
+
     /*
      * Overriding Default model
      */
@@ -38,5 +42,6 @@ export function defaults() {
       defaults.model = reactUtilsDefaults.model
     }
   }
+
   return defaults
 }
