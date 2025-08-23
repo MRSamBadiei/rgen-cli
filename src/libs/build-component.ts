@@ -23,11 +23,7 @@ export default class Component<T extends ComponentFlag> extends Build<T> {
       }
 
       const componentTemplate = `import { cn } from '@/libs/utils'
-${
-  this.typescript
-    ? `import { type ComponentProps } from 'react'\n\ninterface Props extends ComponentProps<'div'> {}\n`
-    : ''
-}
+${this.typescript ? `import { type ComponentProps } from 'react'\n\ntype Props = ComponentProps<'div'>\n` : ''}
 export function ${this.uname}({ className, ...props }${this.typescript ? ': Props' : ''})${
         this.typescript ? ': React.JSX.Element' : ''
       } {

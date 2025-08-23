@@ -45,7 +45,7 @@ export const ${this.uname}Provider = ({ children }${this.typescript ? ': Props' 
 
       const useTemplate = `import { useContext } from 'react'
 import { ${this.uname}Context } from './${this.uname}Context'${
-        this.typescript ? `\nimport { ${this.uname}ContextValue } from './types'` : ''
+        this.typescript ? `\nimport { type ${this.uname}ContextValue } from './types'` : ''
       }
 
 export function use${this.uname}()${this.typescript ? `: ${this.uname}ContextValue` : ''} {

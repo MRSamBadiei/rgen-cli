@@ -26,7 +26,7 @@ export const ${this.name}Schema = z.object({
 
       // src/pages/auth/forms/useXForm.ts or js
       const useFormPath = path.join(this.rootDir, this.name, `use${this.uname}Form.${this.typescript ? 'ts' : 'js'}`)
-      const useFormTemplate = `import { useForm${this.typescript ? ', UseFormReturn' : ''} } from 'react-hook-form'
+      const useFormTemplate = `import { useForm${this.typescript ? ', type UseFormReturn' : ''} } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ${this.name}Schema${this.typescript ? `, type ${this.uname}FormData` : ''} } from './${this.name}.schema'
 

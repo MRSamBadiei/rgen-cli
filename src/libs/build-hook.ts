@@ -23,7 +23,7 @@ export default class Hook<T extends HookFlag> extends Build<T> {
       }
 
       const hookTemplate = `import { useState, useEffect${
-        this.typescript ? ', Dispatch, SetStateAction' : ''
+        this.typescript ? ', type Dispatch, type SetStateAction' : ''
       } } from 'react'${
         this.typescript
           ? `\n\nexport type Use${this.uname}Return<T> = {

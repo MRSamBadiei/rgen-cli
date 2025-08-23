@@ -68,7 +68,7 @@ export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector\n`
       }
 
       case 'index': {
-        return `import { configureStore${this.typescript ? ', Reducer' : ''} } from '@reduxjs/toolkit'
+        return `import { configureStore${this.typescript ? ', type Reducer' : ''} } from '@reduxjs/toolkit'
 ${
   this.typescript
     ? `\ntype ReducerModule = {
